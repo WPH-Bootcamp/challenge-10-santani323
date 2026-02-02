@@ -10,9 +10,15 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 /**
  * Generic fetch function dengan error handling
  */
-async function fetchAPI<T>(endpoint: string): Promise<T> {
+async function fetchAPI<T>(endpoint: string, p0: { method: string; body: any; }): Promise<T> {
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`);
+    const response = await fetch(`${API_BASE_URL}${endpoint}`,{
+      method: p0.method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(p0.body),
+    });
     
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);

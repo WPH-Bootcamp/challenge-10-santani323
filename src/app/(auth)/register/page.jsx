@@ -5,15 +5,18 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import Link from "next/link";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function RegisterPage() {
-  const [loading, setLoading] = useState(false);
+  const { register, loading } = useAuth();
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState({
     name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -21,11 +24,25 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let newErrors = { name: "", email: "", password: "", confirmPassword: "" };
+    let newErrors = {
+      name: "",
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
     let hasError = false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!name) {
       newErrors.name = "Name is required";
+      hasError = true;
+    }
+    if (!username) {
+      newErrors.username = "Username is required";
+      hasError = true;
+    }
+    if (!username) {
+      newErrors.username = "Username is required";
       hasError = true;
     }
     if (!email) {
@@ -49,9 +66,9 @@ export default function RegisterPage() {
     }
     setErrors(newErrors);
     if (hasError) return false;
-    setLoading(true);
+    register({ name, username, email, password });
     // Handle registration logic here
-    console.log("Register with:", { name, email, password });
+    console.log("Register with:", { username, email, password });
   };
 
   return (
@@ -70,6 +87,15 @@ export default function RegisterPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               error={errors.name}
+            />
+            <InputField
+              label={"Username"}
+              name={"username"}
+              type={"text"}
+              placeholder={"Enter your username"}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              error={errors.username}
             />
             <InputField
               label={"Email"}
