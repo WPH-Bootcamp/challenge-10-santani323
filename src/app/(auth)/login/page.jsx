@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const [loading, setLoading] = useState(false);
+  const { login, loading, error } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -15,9 +16,8 @@ export default function LoginPage() {
     password: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
     let newErrors = { email: "", password: "" };
     let hasError = false;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -34,8 +34,14 @@ export default function LoginPage() {
     }
     setErrors(newErrors);
     if (hasError) return false;
-    setLoading(true);
-    console.log("Login with:", { email, password });
+    try {
+      const response = await login({ email, password });
+      // TODO: handle success (redirect, save token, etc)
+      console.log("Login response:", response);
+    } catch (err) {
+      // Error sudah ditangani di useAuth
+      console.error("Login error:", err);
+    }
   };
 
   return (

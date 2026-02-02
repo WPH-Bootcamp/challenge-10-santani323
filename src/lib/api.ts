@@ -1,45 +1,46 @@
 /**
  * API Utility
- * 
+ *
  * Helper functions untuk fetch data dari backend API
- * Kamu bisa modify atau extend sesuai kebutuhan
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-/**
- * Generic fetch function dengan error handling
- */
-async function fetchAPI<T>(endpoint: string, p0: { method: string; body: any; }): Promise<T> {
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+
+interface FetchAPIOptions<TBody = any> {
+  method?: HttpMethod;
+  body?: TBody;
+  headers?: HeadersInit;
+}
+
+async function fetchAPI<TResponse, TBody = any>(
+  endpoint: string,
+  options: FetchAPIOptions<TBody> = {},
+): Promise<TResponse> {
+  const { method = "GET", body, headers } = options;
+
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`,{
-      method: p0.method,
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      method,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
+        ...headers,
       },
-      body: JSON.stringify(p0.body),
+      body: body ? JSON.stringify(body) : undefined,
     });
-    
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+    console.log("responseresponse", response);
+
+    if (!response?.ok) {
+      const errorText = await response.text();
+      console.log("responseresponse errorText", response, errorText);
     }
     
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error('API Fetch Error:', error);
+    console.error("API Fetch Error:", error);
     throw error;
   }
 }
-
-// TODO: Implement API functions sesuai dengan endpoint yang tersedia
-// Contoh:
-// export async function getBlogPosts() {
-//   return fetchAPI<BlogPost[]>('/posts');
-// }
-//
-// export async function getBlogPost(id: string) {
-//   return fetchAPI<BlogPost>(`/posts/${id}`);
-// }
 
 export { fetchAPI, API_BASE_URL };
