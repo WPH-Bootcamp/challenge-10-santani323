@@ -8,39 +8,48 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-interface FetchAPIOptions<TBody = any> {
+interface FetchAPIOptions<TBody = unknown> {
   method?: HttpMethod;
   body?: TBody;
   headers?: HeadersInit;
 }
 
-async function fetchAPI<TResponse, TBody = any>(
+async function fetchAPI<TResponse, TBody = unknown>(
   endpoint: string,
   options: FetchAPIOptions<TBody> = {},
 ): Promise<TResponse> {
   const { method = "GET", body, headers } = options;
 
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-        ...headers,
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-    console.log("responseresponse", response);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    method,
+    headers: {
+      "Content-Type": "application/json",
+      ...headers,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
 
-    if (!response?.ok) {
-      const errorText = await response.text();
-      console.log("responseresponse errorText", response, errorText);
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error("API Fetch Error:", error);
+  let data: any;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  
+  if (!response.ok) {
+    const error = {
+      statusCode: response.status,
+      message: data?.message || "Something went wrong",
+      error: data?.error || "API Error",
+      details: data?.details,
+      path: endpoint,
+    };
+
     throw error;
   }
+
+  return data as TResponse;
 }
 
 export { fetchAPI, API_BASE_URL };

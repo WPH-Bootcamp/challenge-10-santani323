@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { postRegisterService } from "@/services/auth";
+import { postRegisterService, postLoginService } from "@/services/auth";
 
 export function useAuth() {
   const router = useRouter();
@@ -25,25 +25,20 @@ export function useAuth() {
     [router],
   );
 
-  const login = useCallback(
-    async (data: any) => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { postLoginService } = await import("@/services/auth");
-        const response = await postLoginService(data);
-        console.log("Login successful:", response);
-        // router.push("/dashboard");
-        return response;
-      } catch (err: any) {
-        setError(err.message);
-        throw err;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [router],
-  );
+  const login = useCallback(async (data: any) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await postLoginService(data);
+      // Success: response sudah dikembalikan ke komponen
+      return response;
+    } catch (err: any) {
+      setError(err.message || "Login failed");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   return {
     register,

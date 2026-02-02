@@ -40,7 +40,7 @@ export default function LoginPage() {
       console.log("Login response:", response);
     } catch (err) {
       // Error sudah ditangani di useAuth
-      console.error("Login error:", err);
+      console.log("Login error:", err);
     }
   };
 
@@ -49,6 +49,13 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign In</h1>
+          <div
+            className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
+            role="alert"
+          >
+            <p className="font-bold">Warning</p>
+            <p>Something not ideal might be happening.</p>
+          </div>
           <Form onSubmit={handleSubmit}>
             <InputField
               label="Email"
