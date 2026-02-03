@@ -1,52 +1,67 @@
 "use client";
+import type { Article } from "@/types/blog";
 
-type ArticleCardProps = {
-  item: string;
-};
+function formatDate(dateValue?: string) {
+  if (!dateValue) return "";
+  const date = new Date(dateValue);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat("id-ID", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
 
-export default function ArticleCard({ item }: ArticleCardProps) {
+function getInitials(name?: string) {
+  if (!name) return "";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "";
+  if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "";
+  return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
+}
+
+export default function ArticleCard(article: Article) {
   return (
     <div
-      key={item}
+      key={article.id}
       className="bg-white rounded-lg shadow p-4 flex flex-col md:flex-row gap-4"
     >
       <img
-        src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=facearea&w=120&h=120&q=80"
+        src={article.imageUrl}
         alt="cover"
         className="w-full md:w-32 h-32 object-cover rounded"
       />
       <div className="flex-1 flex flex-col justify-between">
         <div>
-          <h3 className="text-base font-semibold mb-1">
-            5 Reasons to Learn Frontend Development in 2025
-          </h3>
+          <h3 className="text-base font-semibold mb-1">{article.title}</h3>
           <div className="flex flex-wrap gap-2 mb-2">
-            <span className="bg-gray-100 text-xs px-2 py-1 rounded">
-              Programming
-            </span>
-            <span className="bg-gray-100 text-xs px-2 py-1 rounded">
-              Frontend
-            </span>
-            <span className="bg-gray-100 text-xs px-2 py-1 rounded">
-              Coding
-            </span>
+            {article.tags.map((tag) => (
+              <span key={tag} className="bg-gray-100 text-xs px-2 py-1 rounded">
+                {tag}
+              </span>
+            ))}
           </div>
-          <p className="text-gray-600 text-sm mb-2 line-clamp-2">
-            Frontend development is crucial for building beautiful and
-            interactive user experiences. Here are five key reasons why you
-            should consider learning frontend development this year.
-          </p>
+          <p
+            className="text-gray-600 text-sm mb-2 line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: article.content }}
+          />
         </div>
         <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
           <div className="flex items-center gap-2">
-            <img
-              src="https://randomuser.me/api/portraits/men/32.jpg"
-              alt="author"
-              className="w-6 h-6 rounded-full"
-            />
-            <span>John Doe</span>
+            {article.author?.avatarUrl ? (
+              <img
+                src={article.author?.avatarUrl}
+                alt={article.author?.name ?? "author"}
+                className="w-6 h-6 rounded-full object-cover"
+              />
+            ) : (
+              <div className="w-6 h-6 rounded-full bg-gray-200 text-gray-600 text-[10px] font-semibold flex items-center justify-center">
+                {getInitials(article.author?.name)}
+              </div>
+            )}
+            <span>{article?.author?.name}</span>
           </div>
-          <span>2 May 2025</span>
+          <span>{formatDate(article?.createdAt)}</span>
         </div>
       </div>
     </div>

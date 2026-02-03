@@ -8,10 +8,11 @@ import { useEffect } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
 
 export default function Home() {
-  const { articles, page, limit, fetchArticles } = useBlogs();
+  const { articles, page, limit, lastPage, currentPage, fetchArticles } =
+    useBlogs();
 
   useEffect(() => {
-    fetchArticles(page, limit);
+    fetchArticles({ page, limit });
   }, [fetchArticles, page, limit]);
   return (
     <>
@@ -23,31 +24,25 @@ export default function Home() {
             <h2 className="text-lg font-semibold mb-4">Recommend For You</h2>
             <div className="space-y-4">
               {articles.map((item) => (
-                <ArticleCard
-                  key={typeof item === "number" ? item : item.id}
-                  item={
-                    typeof item === "number"
-                      ? item.toString()
-                      : item.id.toString()
-                  }
-                />
+                <ArticleCard key={item.id} {...item} />
               ))}
             </div>
             {/* Pagination */}
-            <div className="flex justify-end mt-6 gap-2">
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100">
+            <div className="flex justify-center mt-6 gap-2">
+              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100" onClick={() => fetchArticles({ page: currentPage - 1, limit })} disabled={currentPage === 1}>
                 Previous
               </button>
-              <button className="px-3 py-1 rounded border bg-blue-600 text-white">
-                1
-              </button>
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100">
-                2
-              </button>
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100">
-                3
-              </button>
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100">
+              {Array.from({ length: lastPage }, (_, i) => (
+                <button
+                  key={i}
+                  className={`px-3 py-1 rounded border ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-100"}`}
+                  onClick={() => fetchArticles({ page: i + 1, limit })}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100" onClick={() => fetchArticles({ page: currentPage + 1, limit })} disabled={currentPage === lastPage}>
                 Next
               </button>
             </div>
