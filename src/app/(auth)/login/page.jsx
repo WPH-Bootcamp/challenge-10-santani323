@@ -1,14 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import Link from "next/link";
+import SuccessAlert from "@/components/ui/SuccessAlert";
+import WarningAlert from "@/components/ui/WarningAlert";
+
 
 export default function LoginPage() {
+  const router = useRouter();
   const { login, loading, error } = useAuth();
+  const [message, setMessage] = useState("");
+  const [statusResponne, setStatusResponse] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -36,10 +43,16 @@ export default function LoginPage() {
     if (hasError) return false;
     try {
       const response = await login({ email, password });
-      // TODO: handle success (redirect, save token, etc)
-      console.log("Login response:", response);
+      setStatusResponse(200);
+      setMessage("Login successful");
+      // Simpan token ke localStorage
+      if (response && response.token) {
+        localStorage.setItem("token", response.token);
+      }
+      router.push("/");
     } catch (err) {
-      // Error sudah ditangani di useAuth
+      setStatusResponse(err?.statusCode);
+      setMessage(err?.message);
       console.log("Login error:", err);
     }
   };
@@ -49,13 +62,10 @@ export default function LoginPage() {
       <div className="w-full max-w-md p-8">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h1 className="text-2xl font-semibold text-center mb-8">Sign In</h1>
-          <div
-            className="bg-orange-100 border-l-4 border-orange-500 text-orange-700 p-4"
-            role="alert"
-          >
-            <p className="font-bold">Warning</p>
-            <p>Something not ideal might be happening.</p>
-          </div>
+          {statusResponne === 200 && <SuccessAlert message={message} />}
+          {statusResponne !== 200 && message && (
+            <WarningAlert message={message} />
+          )}
           <Form onSubmit={handleSubmit}>
             <InputField
               label="Email"

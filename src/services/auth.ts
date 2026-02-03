@@ -1,24 +1,31 @@
 import { fetchAPI } from "@/lib/api";
-import {
-  AuthRegisterResponse,
+import type {
   AuthRegisterPayload,
-  AuthLoginPayload, 
+  AuthRegisterResponse,
+  AuthLoginPayload,
+  AuthLoginResponse,
 } from "@/types/auth";
 
-export async function postRegisterService(
-  data: AuthRegisterPayload,
-): Promise<AuthRegisterResponse> {
+/**
+ * Register service
+ */
+export const postRegisterService = async (
+  payload: AuthRegisterPayload,
+): Promise<AuthRegisterResponse> => {
   return fetchAPI<AuthRegisterResponse, AuthRegisterPayload>("/auth/register", {
     method: "POST",
-    body: data,
+    body: payload,
   });
-}
+};
 
-export async function postLoginService(
-  data: AuthLoginPayload,
-): Promise<AuthRegisterResponse> {
-  return fetchAPI<AuthRegisterResponse, AuthLoginPayload>("/auth/login", {
+/**
+ * Login service
+ */
+export const postLoginService = async (
+  payload: AuthLoginPayload,
+): Promise<AuthLoginResponse> => {
+  return fetchAPI<AuthLoginResponse, AuthLoginPayload>("/auth/login", {
     method: "POST",
-    body: data,
+    body: payload,
   });
-}
+};

@@ -16,6 +16,10 @@ export type AuthLoginPayload = {
   password: string;
 };
 
+export type AuthLoginResponse = {
+  token: string; 
+};
+
 export type AuthRegisterResponse = {
   id: string;
   email: string;
