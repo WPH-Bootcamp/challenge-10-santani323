@@ -28,22 +28,49 @@ export default function Home() {
               ))}
             </div>
             {/* Pagination */}
-            <div className="flex justify-center mt-6 gap-2">
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100" onClick={() => fetchArticles({ page: currentPage - 1, limit })} disabled={currentPage === 1}>
-                Previous
+            <div className="flex justify-center mt-6 gap-2 items-center">
+              <button
+                className="px-3 py-1 rounded  text-black hover:bg-gray-100 flex items-center"
+                onClick={() => fetchArticles({ page: currentPage - 1, limit })}
+                disabled={currentPage === 1}
+              >
+                <span className="mr-1">&#60;</span> Previous
               </button>
-              {Array.from({ length: lastPage }, (_, i) => (
-                <button
-                  key={i}
-                  className={`px-3 py-1 rounded border ${currentPage === i + 1 ? "bg-blue-600 text-white" : "text-gray-500 hover:bg-gray-100"}`}
-                  onClick={() => fetchArticles({ page: i + 1, limit })}
-                >
-                  {i + 1}
-                </button>
-              ))}
-
-              <button className="px-3 py-1 rounded border text-gray-500 hover:bg-gray-100" onClick={() => fetchArticles({ page: currentPage + 1, limit })} disabled={currentPage === lastPage}>
-                Next
+              {(() => {
+                let pages = [];
+                if (lastPage <= 3) {
+                  for (let i = 1; i <= lastPage; i++) {
+                    pages.push(i);
+                  }
+                } else {
+                  if (currentPage === 1) {
+                    pages = [1, 2, 3];
+                  } else if (currentPage === lastPage) {
+                    pages = [lastPage - 2, lastPage - 1, lastPage];
+                  } else {
+                    pages = [currentPage - 1, currentPage, currentPage + 1];
+                  }
+                }
+                return pages.map((pageNum) => (
+                  <button
+                    key={pageNum}
+                    className={`px-3 py-1 rounded-full mx-1 ${currentPage === pageNum ? "bg-blue-600 text-white" : "text-black hover:bg-gray-100"}`}
+                    onClick={() => fetchArticles({ page: pageNum, limit })}
+                  >
+                    {pageNum}
+                  </button>
+                ));
+              })()}
+              {/* Ellipsis if needed */}
+              {lastPage > 3 && currentPage < lastPage - 1 && (
+                <span className="mx-1">...</span>
+              )}
+              <button
+                className="px-3 py-1 rounded text-black hover:bg-gray-100 flex items-center"
+                onClick={() => fetchArticles({ page: currentPage + 1, limit })}
+                disabled={currentPage === lastPage}
+              >
+                Next <span className="ml-1">&#62;</span>
               </button>
             </div>
           </div>
