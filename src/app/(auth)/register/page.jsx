@@ -6,9 +6,11 @@ import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
+import SuccessAlert from "@/components/ui/SuccessAlert";
+import WarningAlert from "@/components/ui/WarningAlert";
 
 export default function RegisterPage() {
-  const { register, loading } = useAuth();
+  const { register, loading, error, message, statusResponse } = useAuth();
   const [name, setName] = useState("");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ export default function RegisterPage() {
     confirmPassword: "",
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {
       name: "",
@@ -66,9 +68,14 @@ export default function RegisterPage() {
     }
     setErrors(newErrors);
     if (hasError) return false;
-    register({ name, username, email, password });
-    // Handle registration logic here
-    console.log("Register with:", { username, email, password });
+
+    try {
+      const response = await register({ name, username, email, password });
+      // Handle registration logic here
+      console.log("Registration successful:", response);
+    } catch (err) {
+      console.error("Registration error:", err);
+    }
   };
 
   return (
@@ -78,7 +85,11 @@ export default function RegisterPage() {
           <h1 className="text-2xl font-semibold text-left mb-8">Sign Up</h1>
           <Form onSubmit={handleSubmit}>
             {/* Username Field */}
-
+            {statusResponse === 200 && <SuccessAlert message={message} />}
+            {statusResponse !== 200 && error && (
+              <WarningAlert message={error} />
+            )}
+            
             <InputField
               label={"Name"}
               name={"name"}

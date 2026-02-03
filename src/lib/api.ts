@@ -35,7 +35,9 @@ async function fetchAPI<TResponse, TBody = unknown>(
   } catch {
     data = null;
   }
-
+  console.log("fetch response", response);
+  console.log("fetch data", data);
+  
   
   if (!response.ok) {
     const error = {
@@ -46,7 +48,7 @@ async function fetchAPI<TResponse, TBody = unknown>(
       path: endpoint,
     };
 
-    throw error;
+     return error as TResponse;
   }
 
   return data as TResponse;

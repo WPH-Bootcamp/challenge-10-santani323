@@ -8,6 +8,8 @@ export function useAuth() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [statusResponse, setStatusResponse] = useState("");
 
   const register = useCallback(
     async (data: any) => {
@@ -15,9 +17,19 @@ export function useAuth() {
       setError(null);
       try {
         const response = await postRegisterService(data);
-        console.log("Registration successful:", response);
-        // router.push("/login");
+
+        if ("id" in response) {
+          setStatusResponse("200");
+          setMessage("Registration successful");
+          setTimeout(() => {
+            router.push("/login");
+          }, 5000);
+        } else {
+          setStatusResponse(response.statusCode.toString());
+          setError(response.message);
+        }
       } catch (err: any) {
+        console.log("Registration Error:", err);
         setError(err.message);
       }
       setLoading(false);
@@ -30,7 +42,7 @@ export function useAuth() {
     setError(null);
     try {
       const response = await postLoginService(data);
-      // Success: response sudah dikembalikan ke komponen
+
       return response;
     } catch (err: any) {
       setError(err.message || "Login failed");

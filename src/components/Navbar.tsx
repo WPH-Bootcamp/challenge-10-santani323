@@ -58,7 +58,7 @@ export default function Navbar() {
             <Link href="/contact" className="hover:text-blue-600">
               Contact
             </Link>
-            <Link href="/auth/login" className="hover:text-blue-600">
+            <Link href="/login" className="hover:text-blue-600">
               Login
             </Link>
           </div>
