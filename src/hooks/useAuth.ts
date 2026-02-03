@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { postRegisterService, postLoginService } from "@/services/auth";
+import { postRegisterService, postLoginService } from "@/services/authService";
 
 export function useAuth() {
   const router = useRouter();

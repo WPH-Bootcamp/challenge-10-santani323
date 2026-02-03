@@ -23,3 +23,8 @@ export interface ArticlesResponse {
   page: number;
   lastPage: number;
 }
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}

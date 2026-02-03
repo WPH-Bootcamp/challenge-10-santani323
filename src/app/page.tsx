@@ -1,9 +1,18 @@
+"use client";
+
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/article/ArticleCard";
 import ArticleCompact from "@/components/article/ArticleCompact";
+import { useEffect } from "react";
+import { useBlogs } from "@/hooks/useBlogs";
 
 export default function Home() {
+  const { articles, page, limit, fetchArticles } = useBlogs();
+
+  useEffect(() => {
+    fetchArticles(page, limit);
+  }, [fetchArticles, page, limit]);
   return (
     <>
       <Navbar />
@@ -13,8 +22,15 @@ export default function Home() {
           <div className="md:col-span-2">
             <h2 className="text-lg font-semibold mb-4">Recommend For You</h2>
             <div className="space-y-4">
-              {[1, 2, 3, 4].map((item) => (
-                <ArticleCard key={item} item={item.toString()} />
+              {articles.map((item) => (
+                <ArticleCard
+                  key={typeof item === "number" ? item : item.id}
+                  item={
+                    typeof item === "number"
+                      ? item.toString()
+                      : item.id.toString()
+                  }
+                />
               ))}
             </div>
             {/* Pagination */}
@@ -40,9 +56,18 @@ export default function Home() {
           <div className="md:col-span-1">
             <h2 className="text-lg font-semibold mb-4">Most Liked</h2>
             <div className="space-y-4">
-              {[1, 2, 3].map((item) => (
-                <ArticleCompact key={item} item={item.toString()} />
-              ))}
+              {(articles.length ? articles.slice(0, 3) : [1, 2, 3]).map(
+                (item) => (
+                  <ArticleCompact
+                    key={typeof item === "number" ? item : item.id}
+                    item={
+                      typeof item === "number"
+                        ? item.toString()
+                        : item.id.toString()
+                    }
+                  />
+                ),
+              )}
             </div>
           </div>
         </div>
