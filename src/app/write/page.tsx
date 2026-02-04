@@ -8,7 +8,7 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import SuccessAlert from "@/components/ui/SuccessAlert";
-import { addPostService } from "@/services/blogService";
+import { useBlogs } from "@/hooks/useBlogs";
 
 export default function WritePage() {
   const router = useRouter();
@@ -18,8 +18,8 @@ export default function WritePage() {
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+  const { addPost, loading, error } = useBlogs();
 
   useEffect(() => {
     if (!coverFile) {
@@ -37,14 +37,13 @@ export default function WritePage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!coverFile) {
-      setError("Please upload a cover image");
+      setFormError("Please upload a cover image");
       return;
     }
 
-    setLoading(true);
-    setError(null);
+    setFormError(null);
 
     try {
       const tagsArray = tags
@@ -52,7 +51,7 @@ export default function WritePage() {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-      await addPostService({
+      await addPost({
         title,
         content,
         tags: tagsArray,
@@ -64,10 +63,8 @@ export default function WritePage() {
         router.push("/");
       }, 2000);
     } catch (err: any) {
-      setError(err?.message || "Failed to create post");
+      setFormError(err?.message || "Failed to create post");
       setSubmitted(false);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -92,9 +89,9 @@ export default function WritePage() {
               </div>
             )}
 
-            {error && (
+            {(formError || error) && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-                {error}
+                {formError || error}
               </div>
             )}
 
@@ -190,7 +187,9 @@ export default function WritePage() {
                     </div>
                   ) : (
                     <div className="text-center text-sm text-gray-500">
-                      <p className="text-blue-600 font-medium">Click to upload</p>
+                      <p className="text-blue-600 font-medium">
+                        Click to upload
+                      </p>
                       <p>or drag and drop</p>
                       <p className="text-xs mt-1">PNG or JPG (max. 5MB)</p>
                     </div>

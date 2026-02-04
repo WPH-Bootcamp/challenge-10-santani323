@@ -6,6 +6,7 @@ import type {
   ArticleDetailResponse,
   ParamArticleDetail,
   ComponentArticleCardProps,
+  NewArticleParams,
 } from "@/types/blog";
 
 export const getArticlesService = async ({
@@ -48,24 +49,14 @@ export const getPostsByUserIdService = async ({
   );
 };
 
-export const addPostService = async ({
-  title,
-  content,
-  tags,
-  image,
-}: {
-  title: string;
-  content: string;
-  tags: string[];
-  image: File;
-}): Promise<ArticleDetailResponse> => {
+export const addPostService = async (
+  payload: NewArticleParams,
+): Promise<ArticleDetailResponse> => {
   const formData = new FormData();
-  formData.append("title", title);
-  formData.append("content", content);
-  formData.append("image", image);
-  tags.forEach((tag) => {
-    formData.append("tags", tag);
-  });
+  formData.append("title", payload.title);
+  formData.append("content", payload.content);
+  formData.append("tags", JSON.stringify(payload.tags));
+  formData.append("image", payload.image);
 
   return fetchAPI<ArticleDetailResponse>("/posts", {
     method: "POST",

@@ -11,7 +11,22 @@ import type {
   ArticlesResponse,
   UrlParams,
   Article,
+  NewArticleParams,
 } from "@/types/blog";
+
+type ApiErrorResponse = {
+  statusCode?: number;
+  message?: string;
+  error?: string;
+};
+
+const isApiError = (value: unknown): value is ApiErrorResponse => {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    ("statusCode" in value || "error" in value)
+  );
+};
 
 export function useBlogs() {
   const [loading, setLoading] = useState(false);
@@ -121,12 +136,34 @@ export function useBlogs() {
     }
   }, []);
 
+  const addPost = useCallback(async (payload: NewArticleParams) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.addPostService(payload);
+      if (isApiError(response)) {
+        throw new Error(response.message || "Failed to create post");
+      }
+      return response;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to create post");
+      } else {
+        setError("Failed to create post");
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     fetchArticles,
     fetchMostLikedArticles,
     fetchArticleDetail,
     fetchComments,
     fetchByUserId,
+    addPost,
     articles,
     articleMostLiked,
     totalArticles,

@@ -58,4 +58,9 @@ export interface ComponentArticleCardProps {
   author: Author;
 }
 
-
+export interface NewArticleParams {
+  title: string;
+  content: string;
+  tags: string[];
+  image: File;
+}
