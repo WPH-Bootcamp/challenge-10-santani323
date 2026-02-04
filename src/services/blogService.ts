@@ -47,3 +47,28 @@ export const getPostsByUserIdService = async ({
     `/posts/by-user/${userId}?page=${page}&limit=${limit}`,
   );
 };
+
+export const addPostService = async ({
+  title,
+  content,
+  tags,
+  image,
+}: {
+  title: string;
+  content: string;
+  tags: string[];
+  image: File;
+}): Promise<ArticleDetailResponse> => {
+  const formData = new FormData();
+  formData.append("title", title);
+  formData.append("content", content);
+  formData.append("image", image);
+  tags.forEach((tag) => {
+    formData.append("tags", tag);
+  });
+
+  return fetchAPI<ArticleDetailResponse>("/posts", {
+    method: "POST",
+    body: formData,
+  });
+};

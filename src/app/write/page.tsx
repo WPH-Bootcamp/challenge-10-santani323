@@ -1,20 +1,25 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import SuccessAlert from "@/components/ui/SuccessAlert";
+import { addPostService } from "@/services/blogService";
 
 export default function WritePage() {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [tags, setTags] = useState("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!coverFile) {
@@ -30,9 +35,40 @@ export default function WritePage() {
     };
   }, [coverFile]);
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setSubmitted(true);
+    
+    if (!coverFile) {
+      setError("Please upload a cover image");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const tagsArray = tags
+        .split(",")
+        .map((tag) => tag.trim())
+        .filter((tag) => tag.length > 0);
+
+      await addPostService({
+        title,
+        content,
+        tags: tagsArray,
+        image: coverFile,
+      });
+
+      setSubmitted(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 2000);
+    } catch (err: any) {
+      setError(err?.message || "Failed to create post");
+      setSubmitted(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +88,13 @@ export default function WritePage() {
 
             {submitted && (
               <div className="mb-6">
-                <SuccessAlert message="Postingan berhasil disimpan (demo)." />
+                <SuccessAlert message="Postingan berhasil disimpan. Redirecting..." />
+              </div>
+            )}
+
+            {error && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                {error}
               </div>
             )}
 
@@ -168,9 +210,9 @@ export default function WritePage() {
                 <Button
                   type="submit"
                   className="w-40"
-                  disabled={!title || !content}
+                  disabled={!title || !content || !coverFile || loading}
                 >
-                  Finish
+                  {loading ? "Publishing..." : "Finish"}
                 </Button>
               </div>
             </Form>
