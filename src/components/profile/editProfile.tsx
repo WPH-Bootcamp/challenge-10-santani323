@@ -1,24 +1,26 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useState } from "react";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
 // npm install @headlessui/react
 
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 // npm install @heroicons/react
 
+import Link from "next/link";
 
 export default function EditProfile() {
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false);
 
   return (
     <div>
-      <button
-        onClick={() => setOpen(true)}
-        className="rounded-md bg-gray-950/5 px-2.5 py-1.5 text-sm font-semibold text-gray-900 hover:bg-gray-950/10 dark:bg-white/10 dark:text-white dark:inset-ring dark:inset-ring-white/5 dark:hover:bg-white/20"
-      >
-        Open dialog
-      </button>
+      <span onClick={() => setOpen(true)}>Edit Profile</span>
+     
       <Dialog open={open} onClose={setOpen} className="relative z-10">
         <DialogBackdrop
           transition
@@ -34,16 +36,23 @@ export default function EditProfile() {
               <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 dark:bg-gray-800">
                 <div className="sm:flex sm:items-start">
                   <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10 dark:bg-red-500/10">
-                    <ExclamationTriangleIcon aria-hidden="true" className="size-6 text-red-600 dark:text-red-400" />
+                    <ExclamationTriangleIcon
+                      aria-hidden="true"
+                      className="size-6 text-red-600 dark:text-red-400"
+                    />
                   </div>
                   <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <DialogTitle as="h3" className="text-base font-semibold text-gray-900 dark:text-white">
+                    <DialogTitle
+                      as="h3"
+                      className="text-base font-semibold text-gray-900 dark:text-white"
+                    >
                       Deactivate account
                     </DialogTitle>
                     <div className="mt-2">
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Are you sure you want to deactivate your account? All of your data will be permanently removed.
-                        This action cannot be undone.
+                        Are you sure you want to deactivate your account? All of
+                        your data will be permanently removed. This action
+                        cannot be undone.
                       </p>
                     </div>
                   </div>
@@ -71,5 +80,5 @@ export default function EditProfile() {
         </div>
       </Dialog>
     </div>
-  )
+  );
 }
