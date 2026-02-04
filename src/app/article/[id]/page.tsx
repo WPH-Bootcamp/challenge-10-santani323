@@ -129,9 +129,9 @@ export default function ArticleDetail() {
               Send
             </button>
           </form>
-          <div className="space-y-4">
+          <div className="divide-y divide-gray-200">
             {comments?.map((comment) => (
-              <div key={comment.id} className="flex gap-2 items-start">
+              <div key={comment.id} className="flex gap-2 items-start py-4">
                 <img
                   src={comment.author.avatarUrl}
                   width={32}
