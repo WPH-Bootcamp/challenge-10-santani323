@@ -9,3 +9,12 @@ export const getArticlesService = async ({
     `/posts/recommended?page=${page}&limit=${limit}`,
   );
 };
+
+export const getMostLikedService = async ({
+  page = 1,
+  limit = 5,
+}: PaginationParams): Promise<ArticlesResponse> => {
+  return fetchAPI<ArticlesResponse>(
+    `/posts/most-liked?page=${page}&limit=${limit}`,
+  );
+};

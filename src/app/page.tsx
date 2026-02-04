@@ -10,17 +10,20 @@ import { useBlogs } from "@/hooks/useBlogs";
 export default function Home() {
   const {
     articles,
+    articleMostLiked,
     page,
     limit,
     lastPage,
     currentPage,
     loading,
     fetchArticles,
+    fetchMostLikedArticles,
   } = useBlogs();
 
   useEffect(() => {
     fetchArticles({ page, limit });
-  }, [fetchArticles, page, limit]);
+    fetchMostLikedArticles({ page: 1, limit: 3 });
+  }, [fetchArticles, fetchMostLikedArticles, page, limit]);
 
   return (
     <>
@@ -86,18 +89,9 @@ export default function Home() {
           <div className="md:col-span-1">
             <h2 className="text-lg font-semibold mb-4">Most Liked</h2>
             <div className="space-y-4">
-              {(articles.length ? articles.slice(0, 3) : [1, 2, 3]).map(
-                (item) => (
-                  <ArticleCompact
-                    key={typeof item === "number" ? item : item.id}
-                    item={
-                      typeof item === "number"
-                        ? item.toString()
-                        : item.id.toString()
-                    }
-                  />
-                ),
-              )}
+              {articleMostLiked.map((item) => (
+                <ArticleCompact key={item.id} {...item} />
+              ))}
             </div>
           </div>
         </div>
