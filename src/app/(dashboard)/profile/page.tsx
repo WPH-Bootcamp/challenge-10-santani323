@@ -11,6 +11,7 @@ import { useUser } from "@/hooks/useUser";
 import { getInitials } from "@/lib/formater";
 import ChangePassword from "@/components/profile/changePassword";
 import YourPost from "@/components/profile/yourPost";
+import EditProfile from "@/components/profile/editProfile";
 
 type ActiveTab = "posts" | "profile" | "password";
 
@@ -109,16 +110,7 @@ export default function ProfilePage() {
                       )}
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveTab("profile");
-                      setIsEditing(true);
-                    }}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium h-fit"
-                  >
-                    Edit Profile
-                  </button>
+                  <EditProfile />
                 </div>
               </div>
 
