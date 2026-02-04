@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogBackdrop,
@@ -13,6 +13,8 @@ import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { useUser } from "@/hooks/useUser";
+import { useSelector } from "react-redux";
+import type { ProfileState } from "@/types/users";
 
 type FormDataState = {
   name: string;
@@ -20,29 +22,44 @@ type FormDataState = {
 };
 
 export default function EditProfile() {
-  const { fetchUserProfile, user, loading: userLoading } = useUser();
+  const { fetchUserProfile } = useUser();
+  const profile = useSelector(
+    (state: { profile: ProfileState }) => state.profile,
+  );
+
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState<File | null>(null);
-
-  const avatarPreview = avatar
-    ? URL.createObjectURL(avatar)
-    : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop";
-
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [formData, setFormData] = useState<FormDataState>({
-    name: "John Doe",
-    headline: "Frontend Developer",
+    name: "",
+    headline: "",
   });
+
+  useEffect(() => {
+    if (open) {
+      setFormData({
+        name: profile?.name || "",
+        headline: profile?.headline || "",
+      });
+      setAvatar(null);
+      setAvatarPreview("");
+    }
+  }, [open, profile]);
+
+  useEffect(() => {
+    if (!avatar) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setAvatarPreview(reader.result as string);
+    };
+    reader.readAsDataURL(avatar);
+  }, [avatar]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setAvatar(e.target.files[0]);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,30 +70,28 @@ export default function EditProfile() {
       const payload = new FormData();
       payload.append("name", formData.name);
       payload.append("headline", formData.headline);
+      if (avatar) payload.append("avatar", avatar);
 
-      if (avatar) {
-        payload.append("avatar", avatar);
-      }
-
-      const response = await fetch(
+      const res = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
         {
           method: "PATCH",
           headers: {
-            Authorization: `Bearer YOUR_TOKEN_HERE`,
-            // ❗ jangan set Content-Type
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: payload,
         },
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to update profile");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to update profile");
       }
 
+      await fetchUserProfile();
       setOpen(false);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -112,16 +127,13 @@ export default function EditProfile() {
             <Form onSubmit={handleSubmit}>
               {/* Avatar */}
               <div className="mb-6 flex flex-col items-center gap-2">
-                <div className="mb-6">
-                  <AvatarUpload
-                    imageUrl={user?.avatarUrl || avatarPreview}
-                    onChange={(file) => setAvatar(file)}
-                  />
-                </div>
-
-                
+                <AvatarUpload
+                  preview={avatarPreview}
+                  onChange={(file) => setAvatar(file)}
+                />
               </div>
 
+              {/* Fields */}
               <div className="space-y-4">
                 <InputField
                   label="Name"
@@ -129,7 +141,6 @@ export default function EditProfile() {
                   value={formData.name}
                   onChange={handleChange}
                 />
-
                 <InputField
                   label="Profile Headline"
                   name="headline"

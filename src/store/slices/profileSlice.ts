@@ -4,10 +4,10 @@ import type { User, ProfileState } from "@/types/users";
 const initialState: ProfileState = {
   id: 0,
   name: "",
-  avatarPublicId: "",
   avatarUrl: "",
   email: "",
   username: "",
+  headline: "",
   user: null,
   loading: false,
   error: null,
@@ -18,7 +18,10 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
-      state.avatarUrl = action.payload.avatarUrl ?? state.avatarUrl;
+      if (action.payload.name) state.name = action.payload.name;
+      if (action.payload.email) state.email = action.payload.email;
+      if (action.payload.headline) state.headline = action.payload.headline;
+      if (action.payload.avatarUrl) state.avatarUrl = action.payload.avatarUrl;
       state.username = action.payload.name ?? state.username;
     },
     setError: (state, action: PayloadAction<string>) => {
