@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Article } from "@/types/blog";
 
 function stripHtml(value?: string) {
@@ -10,9 +11,11 @@ function stripHtml(value?: string) {
 export default function ArticleCompact(article: Article) {
   const excerpt = stripHtml(article.content);
   return (
-    <div
+    <Link
       key={article.id}
-      className="bg-white rounded-lg shadow p-4 flex flex-col gap-2"
+      href={`/article/${article.id}`}
+      className="block bg-white rounded-lg shadow p-4 flex flex-col gap-2 hover:shadow-md transition-shadow"
+      aria-label={`Buka artikel ${article.title}`}
     >
       <h3 className="text-sm font-semibold mb-1 line-clamp-2">
         {article.title}
@@ -50,6 +53,6 @@ export default function ArticleCompact(article: Article) {
           {article.comments}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }

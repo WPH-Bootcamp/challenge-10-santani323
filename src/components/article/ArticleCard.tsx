@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import type { Article } from "@/types/blog";
 
 function formatDate(dateValue?: string) {
@@ -22,7 +23,11 @@ function getInitials(name?: string) {
 
 export default function ArticleCard(article: Article) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <Link
+      href={`/article/${article.id}`}
+      className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+      aria-label={`Buka artikel ${article.title}`}
+    >
       <div className="flex flex-col md:flex-row">
         {/* Image Container */}
         <div className="w-full md:w-2/5 h-48 md:h-auto md:min-h-64 flex-shrink-0">
@@ -118,6 +123,6 @@ export default function ArticleCard(article: Article) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

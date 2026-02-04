@@ -41,7 +41,11 @@ export default function Home() {
             {/* Pagination */}
             <div className="flex justify-center mt-6 gap-2 items-center">
               <button
-                className="px-3 py-1 rounded  text-black hover:bg-gray-100 flex items-center"
+                className={`px-3 py-1 rounded flex items-center transition-colors ${
+                  currentPage === 1
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black hover:bg-blue-50 hover:text-blue-700"
+                }`}
                 onClick={() => fetchArticles({ page: currentPage - 1, limit })}
                 disabled={currentPage === 1}
               >
@@ -65,7 +69,12 @@ export default function Home() {
                 return pages.map((pageNum) => (
                   <button
                     key={pageNum}
-                    className={`px-3 py-1 rounded-full mx-1 ${currentPage === pageNum ? "bg-blue-600 text-white" : "text-black hover:bg-gray-100"}`}
+                    aria-current={currentPage === pageNum ? "page" : undefined}
+                    className={`px-3 py-1 rounded-full mx-1 transition-colors ${
+                      currentPage === pageNum
+                        ? "bg-blue-600 text-white"
+                        : "text-black hover:bg-blue-50 hover:text-blue-700"
+                    }`}
                     onClick={() => fetchArticles({ page: pageNum, limit })}
                   >
                     {pageNum}
@@ -77,7 +86,11 @@ export default function Home() {
                 <span className="mx-1">...</span>
               )}
               <button
-                className="px-3 py-1 rounded text-black hover:bg-gray-100 flex items-center"
+                className={`px-3 py-1 rounded flex items-center transition-colors ${
+                  currentPage === lastPage
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black hover:bg-blue-50 hover:text-blue-700"
+                }`}
                 onClick={() => fetchArticles({ page: currentPage + 1, limit })}
                 disabled={currentPage === lastPage}
               >
