@@ -67,17 +67,14 @@ export default function EditProfile() {
     setLoading(true);
 
     try {
-      // If UpdateProfilePayload expects an object, not FormData:
-      const payload: any = {
-        name: formData.name,
-        headline: formData.headline,
-      };
-      // If avatar is required as a file, you may need to handle it differently in your API
-      // if (avatar) {
-      //   payload.avatar = avatar;
-      // }
-      if (avatar) payload.append("avatar", avatar);
-      await updateUserProfile(payload);
+      const formDataPayload = new FormData();
+      formDataPayload.append("name", formData.name);
+      formDataPayload.append("headline", formData.headline);
+      if (avatar) {
+        formDataPayload.append("avatar", avatar);
+      }
+
+      await updateUserProfile(formDataPayload as any);
       await fetchUserProfile();
       setOpen(false);
     } catch (err) {

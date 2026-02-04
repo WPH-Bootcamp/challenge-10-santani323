@@ -23,14 +23,16 @@ async function fetchAPI<TResponse, TBody = unknown>(
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
+  const isFormData = body instanceof FormData;
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? (isFormData ? (body as any) : JSON.stringify(body)) : undefined,
   });
 
   let data: any;
