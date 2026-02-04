@@ -12,6 +12,7 @@ import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { useUser } from "@/hooks/useUser";
 
 type FormDataState = {
   name: string;
@@ -19,6 +20,7 @@ type FormDataState = {
 };
 
 export default function EditProfile() {
+  const { fetchUserProfile, user, loading: userLoading } = useUser();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -28,8 +30,8 @@ export default function EditProfile() {
     : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop";
 
   const [formData, setFormData] = useState<FormDataState>({
-    name: "John Doe",
-    headline: "Frontend Developer",
+    name: user?.name ?? "",
+    headline: user?.headline ?? "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,11 +39,7 @@ export default function EditProfile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setAvatar(e.target.files[0]);
-    }
-  };
+ 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,12 +110,10 @@ export default function EditProfile() {
               <div className="mb-6 flex flex-col items-center gap-2">
                 <div className="mb-6">
                   <AvatarUpload
-                    imageUrl={avatarPreview}
+                    imageUrl={user?.avatarUrl || avatarPreview}
                     onChange={(file) => setAvatar(file)}
                   />
                 </div>
-
-                
               </div>
 
               <div className="space-y-4">

@@ -110,7 +110,7 @@ export default function ProfilePage() {
                       )}
                     </div>
                   </div>
-                  <EditProfile />
+                  <EditProfile  />
                 </div>
               </div>
 
