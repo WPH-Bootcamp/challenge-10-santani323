@@ -64,3 +64,13 @@ export interface NewArticleParams {
   tags: string[];
   image: File;
 }
+
+export interface AvatarUrl {
+  id: number;
+  name: string;
+  headline: string;
+  email?: string;
+  avatarUrl?: string;
+  content?: string;
+  createdAt?: string;
+}

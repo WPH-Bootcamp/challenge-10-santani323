@@ -122,12 +122,13 @@ export default function ArticleDetail() {
                   alt={comment.author.name}
                   className="rounded-full"
                 />
+
                 <div>
                   <div className="font-medium">{comment.author.name}</div>
-                  <div className="text-sm text-gray-600">{comment.content}</div>
                   <div className="text-xs text-gray-400 mt-1">
                     {formatDate(comment.createdAt)}
                   </div>
+                  <div className="text-sm text-gray-600">{comment.content}</div>
                 </div>
               </div>
             ))}

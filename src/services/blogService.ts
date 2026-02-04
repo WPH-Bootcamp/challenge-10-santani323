@@ -7,6 +7,7 @@ import type {
   ParamArticleDetail,
   ComponentArticleCardProps,
   NewArticleParams,
+  AvatarUrl,
 } from "@/types/blog";
 
 export const getArticlesService = async ({
@@ -37,6 +38,12 @@ export const getArticleCommentsService = async ({
   id,
 }: ParamArticleDetail): Promise<ComponentArticleCardProps[]> => {
   return fetchAPI<ComponentArticleCardProps[]>(`/posts/${id}/comments`);
+};
+
+export const getArticleLikesService = async ({
+  id,
+}: ParamArticleDetail): Promise<AvatarUrl[]> => {
+  return fetchAPI<AvatarUrl[]>(`/posts/${id}/likes`);
 };
 
 export const getPostsByUserIdService = async ({

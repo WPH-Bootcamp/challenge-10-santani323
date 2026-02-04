@@ -12,6 +12,7 @@ import type {
   UrlParams,
   Article,
   NewArticleParams,
+  AvatarUrl,
 } from "@/types/blog";
 
 type ApiErrorResponse = {
@@ -36,6 +37,7 @@ export function useBlogs() {
   const [articleDetail, setArticleDetail] =
     useState<ArticleDetailResponse | null>(null);
   const [comments, setComments] = useState<ComponentArticleCardProps[]>([]);
+  const [likes, setLikes] = useState<AvatarUrl[]>([]);
   const [totalArticles, setTotalArticles] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [lastPage, setLastPage] = useState<number>(1);
@@ -116,6 +118,23 @@ export function useBlogs() {
     }
   }, []);
 
+  const fetchLikes = useCallback(async (params: ParamArticleDetail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.getArticleLikesService(params);
+      setLikes(response);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to fetch article detail");
+      } else {
+        setError("Failed to fetch article detail");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchByUserId = useCallback(async (params: UrlParams) => {
     setLoading(true);
     setError(null);
@@ -164,6 +183,7 @@ export function useBlogs() {
     fetchComments,
     fetchByUserId,
     addPost,
+    fetchLikes,
     articles,
     articleMostLiked,
     totalArticles,
@@ -175,5 +195,6 @@ export function useBlogs() {
     error,
     articleDetail,
     comments,
+    likes,
   };
 }

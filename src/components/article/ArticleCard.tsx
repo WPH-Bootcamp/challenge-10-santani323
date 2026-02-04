@@ -14,7 +14,7 @@ export default function ArticleCard(article: Article) {
   );
   return (
     <Link
-      href={`/article/${article.id}`}
+      href={article?.author?.id === id ? `#` : `/article/${article.id}`}
       className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
       aria-label={`Buka artikel ${article.title}`}
     >
