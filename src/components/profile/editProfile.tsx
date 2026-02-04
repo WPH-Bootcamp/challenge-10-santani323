@@ -11,18 +11,25 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import InputField from "@/components/ui/InputField";
 import Button from "@/components/ui/Button";
 import Form from "@/components/ui/Form";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
-type FormData = {
+type FormDataState = {
   name: string;
-  profileHeadline: string;
+  headline: string;
 };
 
 export default function EditProfile() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
+  const [avatar, setAvatar] = useState<File | null>(null);
+
+  const avatarPreview = avatar
+    ? URL.createObjectURL(avatar)
+    : "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop";
+
+  const [formData, setFormData] = useState<FormDataState>({
     name: "John Doe",
-    profileHeadline: "Frontend Developer",
+    headline: "Frontend Developer",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,12 +37,47 @@ export default function EditProfile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) {
+      setAvatar(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setOpen(false);
+
+    try {
+      const payload = new FormData();
+      payload.append("name", formData.name);
+      payload.append("headline", formData.headline);
+
+      if (avatar) {
+        payload.append("avatar", avatar);
+      }
+
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer YOUR_TOKEN_HERE`,
+            // ❗ jangan set Content-Type
+          },
+          body: payload,
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+
+      setOpen(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,14 +93,8 @@ export default function EditProfile() {
         <DialogBackdrop className="fixed inset-0 bg-black/40" />
 
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel
-            className="
-              w-full max-w-sm
-              rounded-xl bg-white shadow-lg
-              p-6
-            "
-          >
-            {/* Header (tanpa border) */}
+          <DialogPanel className="w-full max-w-sm rounded-xl bg-white p-6 shadow-lg">
+            {/* Header */}
             <div className="mb-4 flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold">
                 Edit Profile
@@ -66,7 +102,6 @@ export default function EditProfile() {
               <button
                 onClick={() => setOpen(false)}
                 className="text-gray-400 hover:text-gray-600"
-                aria-label="Close"
               >
                 <XMarkIcon className="h-5 w-5" />
               </button>
@@ -74,22 +109,15 @@ export default function EditProfile() {
 
             <Form onSubmit={handleSubmit}>
               {/* Avatar */}
-              <div className="mb-6 flex justify-center">
-                <div className="relative">
-                  <img
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop"
-                    alt="Profile"
-                    width={80}
-                    height={80}
-                    className="rounded-full object-cover"
+              <div className="mb-6 flex flex-col items-center gap-2">
+                <div className="mb-6">
+                  <AvatarUpload
+                    imageUrl={avatarPreview}
+                    onChange={(file) => setAvatar(file)}
                   />
-                  <button
-                    type="button"
-                    className="absolute bottom-0 right-0 rounded-full bg-blue-500 p-1.5 text-white hover:bg-blue-600"
-                  >
-                    ✎
-                  </button>
                 </div>
+
+                
               </div>
 
               <div className="space-y-4">
@@ -98,24 +126,18 @@ export default function EditProfile() {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Enter your name"
                 />
 
                 <InputField
                   label="Profile Headline"
-                  name="profileHeadline"
-                  value={formData.profileHeadline}
+                  name="headline"
+                  value={formData.headline}
                   onChange={handleChange}
-                  placeholder="Enter your profile headline"
                 />
               </div>
 
-              <Button
-                type="submit"
-                disabled={loading}
-                className="mt-6 w-full"
-              >
-                {loading ? "Saving..." : "Update Profile"}
+              <Button type="submit" loading={loading} className="mt-6 w-full">
+                Update Profile
               </Button>
             </Form>
           </DialogPanel>

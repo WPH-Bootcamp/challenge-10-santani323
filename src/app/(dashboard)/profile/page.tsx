@@ -18,7 +18,7 @@ type ActiveTab = "posts" | "profile" | "password";
 export default function ProfilePage() {
   const { fetchUserProfile, user, loading: userLoading } = useUser();
   const [token, setToken] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<ActiveTab>("profile");
+  const [activeTab, setActiveTab] = useState<ActiveTab>("posts");
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
     name: "",
@@ -120,17 +120,6 @@ export default function ProfilePage() {
                   <div className="flex items-center gap-8">
                     <button
                       type="button"
-                      onClick={() => setActiveTab("profile")}
-                      className={`py-4 text-sm font-medium border-b-2 transition-colors ${
-                        activeTab === "profile"
-                          ? "border-blue-600 text-blue-600"
-                          : "border-transparent text-gray-600 hover:text-blue-600"
-                      }`}
-                    >
-                      Profile
-                    </button>
-                    <button
-                      type="button"
                       onClick={() => setActiveTab("posts")}
                       className={`py-4 text-sm font-medium border-b-2 transition-colors ${
                         activeTab === "posts"
@@ -156,103 +145,6 @@ export default function ProfilePage() {
 
                 {/* Tab Content */}
                 <div className="p-6">
-                  {/* Profile Tab */}
-                  {activeTab === "profile" && (
-                    <div className="max-w-2xl">
-                      {editMessage && (
-                        <div className="mb-6 rounded-md bg-green-50 text-green-700 px-4 py-3 text-sm border border-green-200">
-                          ✓ {editMessage}
-                        </div>
-                      )}
-
-                      {!isEditing ? (
-                        <div>
-                          <div className="space-y-4 mb-6">
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Full Name
-                              </label>
-                              <p className="text-gray-900 text-base">
-                                {user?.name}
-                              </p>
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Email
-                              </label>
-                              <p className="text-gray-900 text-base">
-                                {user?.email}
-                              </p>
-                            </div>
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Profile Headline
-                              </label>
-                              <p className="text-gray-900 text-base">
-                                {user?.headline || "Not set"}
-                              </p>
-                            </div>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setIsEditing(true)}
-                            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                          >
-                            Edit Profile
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <Form onSubmit={handleEditSubmit}>
-                            <InputField
-                              label="Full Name"
-                              name="name"
-                              type="text"
-                              placeholder="Enter your full name"
-                              value={editForm.name}
-                              onChange={(e) =>
-                                setEditForm((prev) => ({
-                                  ...prev,
-                                  name: e.target.value,
-                                }))
-                              }
-                              required
-                            />
-                            <InputField
-                              label="Profile Headline"
-                              name="headline"
-                              type="text"
-                              placeholder="e.g. Frontend Developer"
-                              value={editForm.headline}
-                              onChange={(e) =>
-                                setEditForm((prev) => ({
-                                  ...prev,
-                                  headline: e.target.value,
-                                }))
-                              }
-                            />
-                            <div className="flex gap-3 mt-6">
-                              <Button
-                                type="submit"
-                                loading={isLoading}
-                                className="flex-1"
-                              >
-                                Save Changes
-                              </Button>
-                              <button
-                                type="button"
-                                onClick={() => setIsEditing(false)}
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
-                              >
-                                Cancel
-                              </button>
-                            </div>
-                          </Form>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
                   {/* Posts Tab */}
                   {activeTab === "posts" && <YourPost />}
 
