@@ -3,13 +3,15 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import * as blogService from "@/services/blogService";
-import type { PaginationParams } from "@/types/blog";
+import type { PaginationParams, ParamArticleDetail,ComponentArticleCardProps } from "@/types/blog";
 
 export function useBlogs() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [articles, setArticles] = useState<any[]>([]);
   const [articleMostLiked, setArticleMostLiked] = useState<any[]>([]);
+  const [articleDetail, setArticleDetail] = useState<any>(null);
+  const [comments, setComments] = useState<ComponentArticleCardProps[]>([]);
   const [totalArticles, setTotalArticles] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [lastPage, setLastPage] = useState(1);
@@ -48,9 +50,38 @@ export function useBlogs() {
     [],
   );
 
+  const fetchArticleDetail = useCallback(async (params: ParamArticleDetail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.getArticleDetailService(params);
+      setArticleDetail(response);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch article detail");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchComments = useCallback(async (params: ParamArticleDetail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.getArticleCommentsService(params);
+      console.log("fetchComments response", response); 
+      setComments(response.comments);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch article detail");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     fetchArticles,
     fetchMostLikedArticles,
+    fetchArticleDetail,
+    fetchComments,
     articles,
     articleMostLiked,
     totalArticles,
@@ -60,5 +91,7 @@ export function useBlogs() {
     page,
     loading,
     error,
+    articleDetail,
+    comments,
   };
 }

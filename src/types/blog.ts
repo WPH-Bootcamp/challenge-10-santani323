@@ -1,4 +1,3 @@
- 
 export interface Author {
   id: number;
   name: string;
@@ -28,4 +27,27 @@ export interface ArticlesResponse {
 export interface PaginationParams {
   page?: number;
   limit?: number;
+}
+
+export interface ParamArticleDetail {
+  id: number;
+}
+export interface ArticleDetailResponse {
+  id: number;
+  title: string;
+  content: string;
+  tags: string[];
+  imageUrl: string;
+  imagePublicId: string;
+  createdAt: string;
+  likes: number;
+  comments: number;
+  author: Author;
+}
+
+export interface ComponentArticleCardProps {
+  id: number;
+  content: string;
+  createdAt: string;
+  author: Author;
 }
