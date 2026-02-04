@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
-export default function Navbar() {
+import type { NavbarProps } from "@/types/navigate";
+
+export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
   const { fetchUserProfile, user } = useUser();
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
@@ -33,42 +35,68 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 text-xl font-bold text-blue-600">
-            <Link href="/">MyApp</Link>
-          </div>
-          <div className="flex-1 flex justify-center px-2">
-            <form
-              className="w-full max-w-xs hidden md:block mx-auto"
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-            >
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Search..."
-                  className="block w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
+            {back ? (
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-700 transition-colors"
+                aria-label="Back"
+              >
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
                 >
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </form>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <span className="text-base font-semibold">{title}</span>
+              </button>
+            ) : (
+              <Link href="/">MyApp</Link>
+            )}
           </div>
+          {!back && (
+            <div className="flex-1 flex justify-center px-2">
+              <form
+                className="w-full max-w-xs hidden md:block mx-auto"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                }}
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    className="block w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  />
+                  <button
+                    type="submit"
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                  >
+                    <svg
+                      className="h-5 w-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           {/* Menu untuk user yang tidak login */}
           {!token && (
@@ -91,25 +119,27 @@ export default function Navbar() {
           {/* Menu untuk user yang sudah login */}
           {token && user && (
             <div className="hidden md:flex items-center space-x-4">
-              <Link
-                href="/write"
-                className="flex items-center text-blue-500 hover:text-blue-600 font-medium"
-              >
-                <svg
-                  className="w-5 h-5 mr-1"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              {title !== "Write" && (
+                <Link
+                  href="/write"
+                  className="flex items-center text-blue-500 hover:text-blue-600 font-medium"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                  />
-                </svg>
-                Write Post
-              </Link>
+                  <svg
+                    className="w-5 h-5 mr-1"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                    />
+                  </svg>
+                  Write Post
+                </Link>
+              )}
 
               <div className="relative">
                 <button
@@ -117,7 +147,8 @@ export default function Navbar() {
                   className="flex items-center space-x-2 focus:outline-none"
                 >
                   <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
-                    {user.name.charAt(0).toUpperCase()}{user.name.charAt(1).toUpperCase()}
+                    {user.name.charAt(0).toUpperCase()}
+                    {user.name.charAt(1).toUpperCase()}
                   </div>
                   <span className="text-gray-700 font-medium">{user.name}</span>
                   <svg
@@ -183,25 +214,27 @@ export default function Navbar() {
           )}
 
           <div className="md:hidden flex items-center space-x-2">
-            <button
-              onClick={() => setShowMobileSearch((v) => !v)}
-              className="text-gray-700 focus:outline-none"
-              aria-label="Toggle search"
-            >
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            {!back && (
+              <button
+                onClick={() => setShowMobileSearch((v) => !v)}
+                className="text-gray-700 focus:outline-none"
+                aria-label="Toggle search"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                  />
+                </svg>
+              </button>
+            )}
             <button
               onClick={() => setOpen(!open)}
               className="text-gray-700 focus:outline-none"
@@ -235,9 +268,9 @@ export default function Navbar() {
         </div>
       </div>
       {/* Mobile menu */}
-      {(showMobileSearch || open) && (
+      {((!back && showMobileSearch) || open) && (
         <div className="md:hidden bg-white shadow-lg">
-          {showMobileSearch && (
+          {!back && showMobileSearch && (
             <form
               className="px-2 pt-2 pb-2"
               onSubmit={(e) => {

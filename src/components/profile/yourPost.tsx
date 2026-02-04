@@ -35,9 +35,7 @@ export default function YourPost() {
         </Link>
       </div>
 
-      {postsLoading && (
-        <p className="text-sm text-gray-500">Memuat data...</p>
-      )}
+      {postsLoading && <p className="text-sm text-gray-500">Memuat data...</p>}
 
       {!postsLoading && articles.length === 0 && (
         <p className="text-sm text-gray-500">
