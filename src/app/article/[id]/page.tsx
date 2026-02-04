@@ -4,51 +4,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
+import { formatDate } from "@/lib/formater";
+import AuthorInfo from "@/components/article/AuthorInfo";
 
-function formatDate(value: string) {
-  return new Date(value).toLocaleDateString("en-US", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  });
-}
 
-// Hardcoded article data
-const articleDetailTes = {
-  id: 1,
-  title: "The Ultimate Guide to Modern Web Development in 2026",
-  tags: ["Web Development", "JavaScript", "React", "Next.js"],
-  author: {
-    name: "John Developer",
-    avatarUrl: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  createdAt: "2026-01-15T10:30:00Z",
-  imageUrl:
-    "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&h=400&fit=crop",
-  content: `<p>In the rapidly evolving world of web development, staying up-to-date with the latest technologies and best practices is crucial. This comprehensive guide will walk you through the essential tools, frameworks, and methodologies that define modern web development in 2026.</p>
-  
-  <h2>Understanding the Modern Stack</h2>
-  <p>Today's web development landscape is dominated by component-based frameworks like React, Vue, and Angular. Among these, React with Next.js has emerged as a particularly powerful combination, offering server-side rendering, static site generation, and excellent developer experience.</p>
-  
-  <h2>Key Technologies to Master</h2>
-  <p>To excel in modern web development, you should focus on:</p>
-  <ul>
-    <li>TypeScript for type-safe JavaScript development</li>
-    <li>Next.js for React-based full-stack applications</li>
-    <li>Tailwind CSS for utility-first styling</li>
-    <li>GraphQL or REST APIs for data fetching</li>
-    <li>Vercel or similar platforms for deployment</li>
-  </ul>
-  
-  <h2>Best Practices</h2>
-  <p>Always prioritize performance, accessibility, and user experience. Use modern tools like ESLint and Prettier to maintain code quality, and implement proper testing strategies with Jest and React Testing Library.</p>
-  
-  <p>The journey of becoming a proficient web developer is continuous. Keep learning, experimenting, and building projects to sharpen your skills.</p>`,
-  likes: 234,
-  comments: 3,
-};
+
+
+ 
 
 // Hardcoded comments data
 const commentsData = [
@@ -107,14 +71,7 @@ export default function ArticleDetail() {
       fetchComments({ id: parseInt(articleId) });
     }
   }, [fetchArticleDetail, fetchComments, articleId]);
-
-  function getInitials(name?: string) {
-    if (!name) return "";
-    const parts = name.trim().split(/\s+/).filter(Boolean);
-    if (parts.length === 0) return "";
-    if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "";
-    return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
-  }
+ 
 
   return (
     <>
@@ -125,7 +82,7 @@ export default function ArticleDetail() {
           {articleDetail?.tags.map((tag: string, index: number) => (
             <span
               key={`${tag}-${index}`}
-              className="F
+              className="
                 inline-flex
                 items-center
                 px-4 py-1.5
@@ -142,20 +99,9 @@ export default function ArticleDetail() {
           ))}
         </div>
         <div className="flex items-center gap-2 mb-6">
-          {articleDetail?.author?.avatarUrl ? (
-            <img
-              src={articleDetail?.author?.avatarUrl}
-              alt={articleDetail?.author?.name ?? "author"}
-              className="w-8 h-8 rounded-full object-cover"
-            />
-          ) : (
-            <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-xs font-bold flex items-center justify-center">
-              {getInitials(articleDetail?.author?.name)}
-            </div>
-          )}
-          <span className="text-sm font-medium">
-            {articleDetail?.author?.name}
-          </span>
+          {articleDetail?.author && typeof articleDetail.author.id === "number" ? (
+            <AuthorInfo {...(articleDetail.author as Required<typeof articleDetail.author>)} />
+          ) : null}
           <span className="text-xs text-gray-400">
             {formatDate(articleDetail?.createdAt)}
           </span>
@@ -170,7 +116,7 @@ export default function ArticleDetail() {
           />
         </div>
         <div className="prose max-w-none mb-8">
-          <div dangerouslySetInnerHTML={{ __html: articleDetail?.content }} />
+          <div dangerouslySetInnerHTML={{ __html: articleDetail?.content ?? "" }} />
         </div>
         <div className="flex items-center gap-4 text-sm text-gray-500 mb-8">
           <span>Likes: {articleDetail?.likes}</span>

@@ -4,6 +4,7 @@ import type {
   PaginationParams,
   ArticleDetailResponse,
   ParamArticleDetail,
+  ComponentArticleCardProps, 
 } from "@/types/blog";
 
 export const getArticlesService = async ({
@@ -26,12 +27,12 @@ export const getMostLikedService = async ({
 
 export const getArticleDetailService = async ({
   id,
-}: ParamArticleDetail): Promise<    > => {
+}: ParamArticleDetail): Promise<ArticleDetailResponse> => {
   return fetchAPI<ArticleDetailResponse>(`/posts/${id}`);
 };
 
 export const getArticleCommentsService = async ({
   id,
-}: ParamArticleDetail): Promise<ArticleDetailResponse> => {
-  return fetchAPI<ArticleDetailResponse>(`/posts/${id}/comments`);
+}: ParamArticleDetail): Promise<ComponentArticleCardProps[]> => {
+  return fetchAPI<ComponentArticleCardProps[]>(`/posts/${id}/comments`);
 };

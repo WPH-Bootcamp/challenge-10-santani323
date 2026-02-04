@@ -1,25 +1,8 @@
 "use client";
 import Link from "next/link";
 import type { Article } from "@/types/blog";
-
-function formatDate(dateValue?: string) {
-  if (!dateValue) return "";
-  const date = new Date(dateValue);
-  if (Number.isNaN(date.getTime())) return "";
-  return new Intl.DateTimeFormat("id-ID", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(date);
-}
-
-function getInitials(name?: string) {
-  if (!name) return "";
-  const parts = name.trim().split(/\s+/).filter(Boolean);
-  if (parts.length === 0) return "";
-  if (parts.length === 1) return parts[0][0]?.toUpperCase() ?? "";
-  return `${parts[0][0] ?? ""}${parts[parts.length - 1][0] ?? ""}`.toUpperCase();
-}
+import { formatDate, getInitials } from "@/lib/formater";
+import AuthorInfo from "@/components/article/AuthorInfo";
 
 export default function ArticleCard(article: Article) {
   return (
@@ -68,25 +51,14 @@ export default function ArticleCard(article: Article) {
           {/* Author & Date Footer */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
             <div className="flex items-center gap-3">
-              {article.author?.avatarUrl ? (
-                <img
-                  src={article.author?.avatarUrl}
-                  alt={article.author?.name ?? "author"}
-                  className="w-8 h-8 rounded-full object-cover"
+              {article?.author && typeof article.author.id === "number" ? (
+                <AuthorInfo
+                  {...(article.author as Required<typeof article.author>)}
                 />
-              ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-300 text-gray-700 text-xs font-bold flex items-center justify-center">
-                  {getInitials(article.author?.name)}
-                </div>
-              )}
-              <div>
-                <p className="text-sm font-medium text-gray-900">
-                  {article?.author?.name}
-                </p>
-                <p className="text-xs text-gray-500">
-                  {formatDate(article?.createdAt)}
-                </p>
-              </div>
+              ) : null}
+              <span className="text-xs text-gray-400">
+                {formatDate(article?.createdAt)}
+              </span>
             </div>
           </div>
           <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
