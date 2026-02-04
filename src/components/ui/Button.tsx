@@ -24,7 +24,7 @@ export default function Button({
   className = "",
 }: ButtonProps) {
   const baseStyle =
-    "w-full py-2 px-4 rounded-md font-medium transition duration-200 focus:outline-none";
+    "w-full py-2 px-4 rounded-full font-medium transition duration-200 focus:outline-none";
 
   const variants = {
     primary:
@@ -33,7 +33,8 @@ export default function Button({
       "bg-gray-500 text-white hover:bg-gray-600 focus:ring-2 focus:ring-gray-500",
     danger:
       "bg-red-500 text-white hover:bg-red-600 focus:ring-2 focus:ring-red-500",
-    outline: "border border-gray-300 text-gray-700 hover:bg-gray-100",
+    outline:
+      "border border-gray-300 text-gray-700 hover:bg-gray-100 focus:ring-2 focus:ring-gray-300",
   };
 
   return (

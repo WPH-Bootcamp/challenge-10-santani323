@@ -98,6 +98,12 @@ blog-app-challenge-10/
    ```
    http://localhost:3000
    ```
+4. **Instalas Tambahan**
+   ```
+   npm install @headlessui/react
+   npm install @heroicons/react
+   ```
+
 
 ## 📝 Requirements & Checklist
 
