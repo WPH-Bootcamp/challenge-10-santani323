@@ -5,7 +5,7 @@ import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useRouter } from "next/navigation";
 import { getUserProfileService } from "@/services/userService";
 import type { User } from "@/types/users";
-import { setUser as setUserRedux } from "@/store/slices/profileSlice";
+import { updateUser } from "@/store/slices/profileSlice";
 export function useUser() {
   const dispatch = useAppDispatch();
   const router = useRouter();
@@ -17,7 +17,7 @@ export function useUser() {
     setError(null);
     try {
       const userProfile = await getUserProfileService();
-      dispatch(setUserRedux(userProfile));
+      dispatch(updateUser(userProfile));
       setUserLocal(userProfile);
     } catch (err: any) {
       setError(err.message || "Failed to fetch user profile");

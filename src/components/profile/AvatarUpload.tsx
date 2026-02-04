@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { CameraIcon } from "@heroicons/react/24/solid";
 import { useUser } from "@/hooks/useUser";
 import { getInitials } from "@/lib/formater";
+import { useSelector } from "react-redux";
+import type { User, ProfileState } from "@/types/users";
 
 type AvatarUploadProps = {
   imageUrl: string;
@@ -9,8 +11,10 @@ type AvatarUploadProps = {
 };
 
 export function AvatarUpload({ imageUrl, onChange }: AvatarUploadProps) {
-  const { fetchUserProfile, user, loading: userLoading } = useUser();
-  const initials = useMemo(() => getInitials(user?.name), [user?.name]);
+  // const { fetchUserProfile, user, loading: userLoading } = useUser();
+  const user = useSelector((state: { profile: ProfileState }) => state.profile.user);
+  console.log("userFromRedux", user);
+
   return (
     <div className="relative mx-auto h-28 w-28">
       {/* Avatar */}
@@ -27,7 +31,7 @@ export function AvatarUpload({ imageUrl, onChange }: AvatarUploadProps) {
         />
       ) : (
         <div className="h-full w-full rounded-full object-cover flex items-center justify-center bg-gray-200 text-gray-500 font-semibold text-2xl">
-          {initials || "JD"}
+          {getInitials(user?.name) || "JD"}
         </div>
       )}
 

@@ -1,13 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { User } from "@/types/users";
-
-interface ProfileState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-}
+import type { User, ProfileState } from "@/types/users";
 
 const initialState: ProfileState = {
+  id: 0,
+  name: "",
+  avatarPublicId: "",
+  avatarUrl: "",
+  email: "",
+  username: "",
   user: null,
   loading: false,
   error: null,
@@ -17,17 +17,8 @@ const profileSlice = createSlice({
   name: "profile",
   initialState,
   reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
-    setUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
-      state.error = null;
-    },
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
-      if (state.user) {
-        state.user = { ...state.user, ...action.payload };
-      }
+      state.avatarUrl = action.payload.avatarUrl ?? state.avatarUrl;
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
@@ -44,13 +35,7 @@ const profileSlice = createSlice({
   },
 });
 
-export const {
-  setLoading,
-  setUser,
-  updateUser,
-  setError,
-  clearError,
-  clearUser,
-} = profileSlice.actions;
+export const { updateUser, setError, clearError, clearUser } =
+  profileSlice.actions;
 
 export default profileSlice.reducer;
