@@ -19,6 +19,7 @@ const profileSlice = createSlice({
   reducers: {
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
       state.avatarUrl = action.payload.avatarUrl ?? state.avatarUrl;
+      state.username = action.payload.name ?? state.username;
     },
     setError: (state, action: PayloadAction<string>) => {
       state.error = action.payload;

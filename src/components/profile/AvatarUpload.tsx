@@ -12,26 +12,23 @@ type AvatarUploadProps = {
 
 export function AvatarUpload({ imageUrl, onChange }: AvatarUploadProps) {
   // const { fetchUserProfile, user, loading: userLoading } = useUser();
-  const user = useSelector((state: { profile: ProfileState }) => state.profile.user);
-  console.log("userFromRedux", user);
+  const { user,username, avatarUrl } = useSelector(
+    (state: { profile: ProfileState }) => state.profile,
+  );
+  console.log("userFromRedux", avatarUrl);
 
   return (
     <div className="relative mx-auto h-28 w-28">
-      {/* Avatar */}
-      {/* <img
-        src={imageUrl}
-        alt="Profile"
-        className="h-full w-full rounded-full object-cover"
-      /> */}
-      {imageUrl ? (
+      
+      {avatarUrl ? (
         <img
-          src={imageUrl}
-          alt={user?.name}
+          src={avatarUrl}
+          alt={username || "User Avatar"}
           className="h-full w-full rounded-full object-cover"
         />
       ) : (
         <div className="h-full w-full rounded-full object-cover flex items-center justify-center bg-gray-200 text-gray-500 font-semibold text-2xl">
-          {getInitials(user?.name) || "JD"}
+          {getInitials(username) || " "}
         </div>
       )}
 
