@@ -10,9 +10,9 @@ import InputField from "@/components/ui/InputField";
 import Form from "@/components/ui/Form";
 import { useUser } from "@/hooks/useUser";
 import { getInitials } from "@/lib/formater";
-import ChangePassword from "@/components/profile/changePassword";
-import YourPost from "@/components/profile/yourPost";
-import EditProfile from "@/components/profile/editProfile";
+import ChangePassword from "@/components/profile/ChangePassword";
+import YourPost from "@/components/profile/YourPost";
+import EditProfile from "@/components/profile/EditProfile";
 import type { ProfileState } from "@/types/users";
 
 type ActiveTab = "posts" | "profile" | "password";

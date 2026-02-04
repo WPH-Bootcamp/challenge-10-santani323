@@ -18,6 +18,7 @@ const profileSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action: PayloadAction<Partial<User>>) => {
+      if (action.payload.id) state.id = action.payload.id;
       if (action.payload.name) state.name = action.payload.name;
       if (action.payload.email) state.email = action.payload.email;
       if (action.payload.headline) state.headline = action.payload.headline;

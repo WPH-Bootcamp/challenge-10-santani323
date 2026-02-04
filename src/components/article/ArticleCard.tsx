@@ -4,8 +4,14 @@ import type { Article } from "@/types/blog";
 import { formatDate, getInitials } from "@/lib/formater";
 import AuthorInfo from "@/components/article/AuthorInfo";
 import LikeComentCount from "@/components/article/LikeComentCount";
+import ActionButtons from "@/components/article/ActionButtons";
+import { useSelector } from "react-redux";
+import type { ProfileState } from "@/types/users";
 
 export default function ArticleCard(article: Article) {
+  const { username, avatarUrl, id } = useSelector(
+    (state: { profile: ProfileState }) => state.profile,
+  );
   return (
     <Link
       href={`/article/${article.id}`}
@@ -48,22 +54,24 @@ export default function ArticleCard(article: Article) {
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
           </div>
-
           {/* Author & Date Footer */}
           <div className="flex items-center justify-between pt-3 border-t border-gray-100">
             <div className="flex items-center gap-3">
-              {article?.author && typeof article.author.id === "number" ? (
+              {article?.author && typeof article.author.id === "number" && article?.author?.id != id ? (
                 <AuthorInfo
                   {...(article.author as Required<typeof article.author>)}
                 />
               ) : null}
               <span className="text-xs text-gray-400">
-                {formatDate(article?.createdAt)}
+                {formatDate(article?.createdAt)} | {article?.author?.id === id && formatDate(article?.createdAt)} 
               </span>
             </div>
           </div>
-
-          <LikeComentCount {...article} />
+          {article?.author?.id === id ? (
+            <ActionButtons {...article} />
+          ) : (
+            <LikeComentCount {...article} />
+          )}
         </div>
       </div>
     </Link>

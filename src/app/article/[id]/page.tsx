@@ -4,29 +4,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
 import { formatDate } from "@/lib/formater";
 import AuthorInfo from "@/components/article/AuthorInfo";
 import ArticleCard from "@/components/article/ArticleCard";
-
-// Hardcoded related article
-const relatedArticle = {
-  id: 2,
-  title: "10 Tips for Writing Clean and Maintainable Code",
-  tags: ["Best Practices", "Clean Code", "Software Engineering"],
-  author: {
-    name: "Sarah Johnson",
-    avatarUrl: "https://randomuser.me/api/portraits/women/25.jpg",
-  },
-  createdAt: "2026-01-20T15:00:00Z",
-  imageUrl:
-    "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800&h=400&fit=crop",
-  content:
-    "Writing clean code is an art that every developer should master. In this article, we explore practical tips and techniques to improve your code quality...",
-  likes: 189,
-  comments: 12,
-};
 
 export default function ArticleDetail() {
   const params = useParams();
@@ -113,7 +95,7 @@ export default function ArticleDetail() {
           />
         </div>
         <hr className="my-8 border-gray-200" />
-     
+
         {/* Comments */}
         <div className="mb-8">
           <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
