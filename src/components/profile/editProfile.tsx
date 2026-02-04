@@ -22,7 +22,7 @@ type FormDataState = {
 };
 
 export default function EditProfile() {
-  const { fetchUserProfile } = useUser();
+  const { fetchUserProfile, updateUserProfile } = useUser();
   const profile = useSelector(
     (state: { profile: ProfileState }) => state.profile,
   );
@@ -67,27 +67,17 @@ export default function EditProfile() {
     setLoading(true);
 
     try {
-      const payload = new FormData();
-      payload.append("name", formData.name);
-      payload.append("headline", formData.headline);
+      // If UpdateProfilePayload expects an object, not FormData:
+      const payload: any = {
+        name: formData.name,
+        headline: formData.headline,
+      };
+      // If avatar is required as a file, you may need to handle it differently in your API
+      // if (avatar) {
+      //   payload.avatar = avatar;
+      // }
       if (avatar) payload.append("avatar", avatar);
-
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/profile`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: payload,
-        },
-      );
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Failed to update profile");
-      }
-
+      await updateUserProfile(payload);
       await fetchUserProfile();
       setOpen(false);
     } catch (err) {

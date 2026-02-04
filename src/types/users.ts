@@ -18,4 +18,10 @@ export interface ProfileState {
   error: string | null;
 }
 
+export interface UpdateProfilePayload {
+  name?: string;
+  headline?: string;
+  avatar?: File;
+}
+
 
