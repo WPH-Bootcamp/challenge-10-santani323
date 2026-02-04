@@ -112,7 +112,8 @@ export default function ArticleDetail() {
             dangerouslySetInnerHTML={{ __html: articleDetail?.content ?? "" }}
           />
         </div>
-        <hr className="my-8 bg-gray-300" />
+        <hr className="my-8 border-gray-200" />
+     
         {/* Comments */}
         <div className="mb-8">
           <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
