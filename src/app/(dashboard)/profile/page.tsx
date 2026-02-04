@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Button from "@/components/ui/Button";
@@ -12,20 +13,17 @@ import { getInitials } from "@/lib/formater";
 import ChangePassword from "@/components/profile/changePassword";
 import YourPost from "@/components/profile/yourPost";
 import EditProfile from "@/components/profile/editProfile";
+import type { ProfileState } from "@/types/users";
 
 type ActiveTab = "posts" | "profile" | "password";
 
 export default function ProfilePage() {
-  const { fetchUserProfile, user, loading: userLoading } = useUser();
+  const { fetchUserProfile, loading } = useUser();
   const [token, setToken] = useState<string | null>(null);
+  const { username, avatarUrl, email, name, headline } = useSelector(
+    (state: { profile: ProfileState }) => state.profile,
+  );
   const [activeTab, setActiveTab] = useState<ActiveTab>("posts");
-  const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({
-    name: "",
-    headline: "",
-  });
-  const [editMessage, setEditMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const currentToken = localStorage.getItem("token");
@@ -35,28 +33,7 @@ export default function ProfilePage() {
     }
   }, [fetchUserProfile]);
 
-  useEffect(() => {
-    if (user) {
-      setEditForm({
-        name: user.name || "",
-        headline: user.headline || "",
-      });
-    }
-  }, [user]);
-
-  const initials = useMemo(() => getInitials(user?.name), [user?.name]);
-
-  const handleEditSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    setTimeout(() => {
-      setEditMessage("Profile berhasil diperbarui!");
-      setIsEditing(false);
-      setIsLoading(false);
-      setTimeout(() => setEditMessage(null), 3000);
-    }, 1000);
-  };
+  const initials = useMemo(() => getInitials(name), [name]);
 
   return (
     <>
@@ -85,10 +62,10 @@ export default function ProfilePage() {
               <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
                   <div className="flex items-center gap-4">
-                    {user?.avatarUrl ? (
+                    {avatarUrl ? (
                       <img
-                        src={user.avatarUrl}
-                        alt={user.name}
+                        src={avatarUrl}
+                        alt={username || "User Avatar"}
                         className="w-20 h-20 rounded-full object-cover border-4 border-blue-500"
                       />
                     ) : (
@@ -98,19 +75,17 @@ export default function ProfilePage() {
                     )}
                     <div>
                       <h1 className="text-2xl font-bold text-gray-900">
-                        {user?.name ?? "John Doe"}
+                        {username ?? "John Doe"}
                       </h1>
                       <p className="text-gray-600 mt-1">
-                        {user?.headline ?? "Frontend Developer"}
+                        {headline ?? "Frontend Developer"}
                       </p>
-                      {user?.email && (
-                        <p className="text-sm text-gray-500 mt-1">
-                          {user.email}
-                        </p>
+                      {email && (
+                        <p className="text-sm text-gray-500 mt-1">{email}</p>
                       )}
                     </div>
                   </div>
-                  <EditProfile  />
+                  <EditProfile />
                 </div>
               </div>
 
