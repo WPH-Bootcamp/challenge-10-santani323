@@ -2,9 +2,10 @@ import { fetchAPI } from "@/lib/api";
 import type {
   ArticlesResponse,
   PaginationParams,
+  UrlParams,
   ArticleDetailResponse,
   ParamArticleDetail,
-  ComponentArticleCardProps, 
+  ComponentArticleCardProps,
 } from "@/types/blog";
 
 export const getArticlesService = async ({
@@ -35,4 +36,14 @@ export const getArticleCommentsService = async ({
   id,
 }: ParamArticleDetail): Promise<ComponentArticleCardProps[]> => {
   return fetchAPI<ComponentArticleCardProps[]>(`/posts/${id}/comments`);
+};
+
+export const getPostsByUserIdService = async ({
+  page = 1,
+  limit = 5,
+  userId,
+}: UrlParams): Promise<ArticlesResponse> => {
+  return fetchAPI<ArticlesResponse>(
+    `/posts/by-user/${userId}?page=${page}&limit=${limit}`,
+  );
 };

@@ -29,6 +29,12 @@ export interface PaginationParams {
   limit?: number;
 }
 
+export interface UrlParams {
+  userId?: number;
+  page?: number;
+  limit?: number;
+}
+
 export interface ParamArticleDetail {
   id: number;
 }
@@ -51,3 +57,5 @@ export interface ComponentArticleCardProps {
   createdAt: string;
   author: Author;
 }
+
+

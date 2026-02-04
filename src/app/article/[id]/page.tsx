@@ -4,43 +4,11 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
 import { formatDate } from "@/lib/formater";
 import AuthorInfo from "@/components/article/AuthorInfo";
-
-
-
-
- 
-
-// Hardcoded comments data
-const commentsData = [
-  {
-    id: 1,
-    userName: "James Anderson",
-    userAvatar: "https://randomuser.me/api/portraits/men/33.jpg",
-    comment:
-      "Great article, thanks for sharing! The section on TypeScript was particularly helpful.",
-    createdAt: "2026-01-16T08:20:00Z",
-  },
-  {
-    id: 2,
-    userName: "Chitra Patel",
-    userAvatar: "https://randomuser.me/api/portraits/women/44.jpg",
-    comment:
-      "Very informative, I like the roadmap! Can't wait to try Next.js on my next project.",
-    createdAt: "2026-01-17T14:45:00Z",
-  },
-  {
-    id: 3,
-    userName: "Michael Chen",
-    userAvatar: "https://randomuser.me/api/portraits/men/45.jpg",
-    comment:
-      "Thanks for the insights, looking forward to more posts! The best practices section is gold.",
-    createdAt: "2026-01-18T09:15:00Z",
-  },
-];
+import ArticleCard from "@/components/article/ArticleCard";
 
 // Hardcoded related article
 const relatedArticle = {
@@ -63,7 +31,15 @@ const relatedArticle = {
 export default function ArticleDetail() {
   const params = useParams();
   const articleId = params?.id?.toString();
-  const { articleDetail, fetchArticleDetail, fetchComments } = useBlogs();
+  const {
+    articleDetail,
+    comments,
+    articles,
+    fetchArticleDetail,
+    fetchComments,
+    fetchByUserId,
+  } = useBlogs();
+  console.log("commentscomments", comments);
 
   useEffect(() => {
     if (articleId) {
@@ -71,7 +47,18 @@ export default function ArticleDetail() {
       fetchComments({ id: parseInt(articleId) });
     }
   }, [fetchArticleDetail, fetchComments, articleId]);
- 
+
+  useEffect(() => {
+    if (!articleDetail?.author?.id) return;
+
+    console.log("articleDetail", articleDetail);
+
+    fetchByUserId({
+      userId: articleDetail.author.id,
+      page: 1,
+      limit: 5,
+    });
+  }, [articleDetail?.author?.id]);
 
   return (
     <>
@@ -99,8 +86,13 @@ export default function ArticleDetail() {
           ))}
         </div>
         <div className="flex items-center gap-2 mb-6">
-          {articleDetail?.author && typeof articleDetail.author.id === "number" ? (
-            <AuthorInfo {...(articleDetail.author as Required<typeof articleDetail.author>)} />
+          {articleDetail?.author &&
+          typeof articleDetail.author.id === "number" ? (
+            <AuthorInfo
+              {...(articleDetail.author as Required<
+                typeof articleDetail.author
+              >)}
+            />
           ) : null}
           <span className="text-xs text-gray-400">
             {formatDate(articleDetail?.createdAt)}
@@ -116,17 +108,14 @@ export default function ArticleDetail() {
           />
         </div>
         <div className="prose max-w-none mb-8">
-          <div dangerouslySetInnerHTML={{ __html: articleDetail?.content ?? "" }} />
+          <div
+            dangerouslySetInnerHTML={{ __html: articleDetail?.content ?? "" }}
+          />
         </div>
-        <div className="flex items-center gap-4 text-sm text-gray-500 mb-8">
-          <span>Likes: {articleDetail?.likes}</span>
-          <span>Comments: {articleDetail?.comments}</span>
-        </div>
+        <hr className="my-8 bg-gray-300" />
         {/* Comments */}
         <div className="mb-8">
-          <h3 className="font-semibold mb-2">
-            Comments ({commentsData.length})
-          </h3>
+          <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
           <form className="mb-4">
             <input
               type="text"
@@ -141,18 +130,18 @@ export default function ArticleDetail() {
             </button>
           </form>
           <div className="space-y-4">
-            {commentsData.map((comment) => (
+            {comments?.map((comment) => (
               <div key={comment.id} className="flex gap-2 items-start">
                 <img
-                  src={comment.userAvatar}
+                  src={comment.author.avatarUrl}
                   width={32}
                   height={32}
-                  alt={comment.userName}
+                  alt={comment.author.name}
                   className="rounded-full"
                 />
                 <div>
-                  <div className="font-medium">{comment.userName}</div>
-                  <div className="text-sm text-gray-600">{comment.comment}</div>
+                  <div className="font-medium">{comment.author.name}</div>
+                  <div className="text-sm text-gray-600">{comment.content}</div>
                   <div className="text-xs text-gray-400 mt-1">
                     {formatDate(comment.createdAt)}
                   </div>
@@ -164,51 +153,11 @@ export default function ArticleDetail() {
         {/* Another Post */}
         <div className="mt-10">
           <h3 className="font-semibold mb-3">Another Post</h3>
-          <Link
-            href={`/article/${relatedArticle.id}`}
-            className="flex gap-4 bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow"
-          >
-            <img
-              src={relatedArticle.imageUrl}
-              width={120}
-              height={120}
-              alt={relatedArticle.title}
-              className="rounded object-cover"
-            />
-            <div className="flex-1 flex flex-col justify-between">
-              <div>
-                <h4 className="text-base font-semibold mb-1">
-                  {relatedArticle.title}
-                </h4>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {relatedArticle.tags.map((tag, index) => (
-                    <span
-                      key={`${tag}-${index}`}
-                      className="bg-gray-100 text-xs px-2 py-1 rounded"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-                <p className="text-gray-600 text-xs mb-2 line-clamp-2">
-                  {relatedArticle.content}
-                </p>
-              </div>
-              <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
-                <div className="flex items-center gap-2">
-                  <img
-                    src={relatedArticle.author.avatarUrl}
-                    width={24}
-                    height={24}
-                    alt={relatedArticle.author.name}
-                    className="rounded-full"
-                  />
-                  <span>{relatedArticle.author.name}</span>
-                </div>
-                <span>{formatDate(relatedArticle.createdAt)}</span>
-              </div>
-            </div>
-          </Link>
+          <div className="space-y-4">
+            {articles?.map((relatedArticle) => (
+              <ArticleCard key={relatedArticle.id} {...relatedArticle} />
+            ))}
+          </div>
         </div>
       </div>
       <Footer />

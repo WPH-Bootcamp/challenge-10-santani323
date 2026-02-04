@@ -9,6 +9,7 @@ import type {
   ComponentArticleCardProps,
   ArticleDetailResponse,
   ArticlesResponse,
+  UrlParams,
   Article,
 } from "@/types/blog";
 
@@ -88,8 +89,27 @@ export function useBlogs() {
     setError(null);
     try {
       const response = await blogService.getArticleCommentsService(params);
-      
       setComments(response);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to fetch article detail");
+      } else {
+        setError("Failed to fetch article detail");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const fetchByUserId = useCallback(async (params: UrlParams) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.getPostsByUserIdService(params);
+      setArticles(response.data);
+      // setTotalArticles(response.total);
+      // setCurrentPage(response.page);
+      // setLastPage(response.lastPage);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Failed to fetch article detail");
@@ -106,6 +126,7 @@ export function useBlogs() {
     fetchMostLikedArticles,
     fetchArticleDetail,
     fetchComments,
+    fetchByUserId,
     articles,
     articleMostLiked,
     totalArticles,
