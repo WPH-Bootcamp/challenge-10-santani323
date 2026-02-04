@@ -103,10 +103,22 @@ export default function ProfilePage() {
                         {user?.headline ?? "Frontend Developer"}
                       </p>
                       {user?.email && (
-                        <p className="text-sm text-gray-500 mt-1">{user.email}</p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {user.email}
+                        </p>
                       )}
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab("profile");
+                      setIsEditing(true);
+                    }}
+                    className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium h-fit"
+                  >
+                    Edit Profile
+                  </button>
                 </div>
               </div>
 
