@@ -2,8 +2,10 @@
 // ...existing code...
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
+import { useUser } from "@/hooks/useUser";
 export default function Navbar() {
+  const { fetchUserProfile, user } = useUser();
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
@@ -14,6 +16,9 @@ export default function Navbar() {
 
   useEffect(() => {
     setToken(localStorage.getItem("token"));
+    if (localStorage.getItem("token")) {
+      fetchUserProfile();
+    }
   }, []);
 
   const handleLogout = () => {
@@ -84,7 +89,7 @@ export default function Navbar() {
           )}
 
           {/* Menu untuk user yang sudah login */}
-          {token && (
+          {token && user && (
             <div className="hidden md:flex items-center space-x-4">
               <Link
                 href="/write"
@@ -112,9 +117,9 @@ export default function Navbar() {
                   className="flex items-center space-x-2 focus:outline-none"
                 >
                   <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
-                    JD
+                    {user.name.charAt(0).toUpperCase()}{user.name.charAt(1).toUpperCase()}
                   </div>
-                  <span className="text-gray-700 font-medium">John Doe</span>
+                  <span className="text-gray-700 font-medium">{user.name}</span>
                   <svg
                     className="w-4 h-4 text-gray-500"
                     fill="none"

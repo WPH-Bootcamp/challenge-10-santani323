@@ -6,7 +6,7 @@
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 
-type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
+type HttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
 
 interface FetchAPIOptions<TBody = unknown> {
   method?: HttpMethod;
@@ -20,10 +20,14 @@ async function fetchAPI<TResponse, TBody = unknown>(
 ): Promise<TResponse> {
   const { method = "GET", body, headers } = options;
 
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     method,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -34,11 +38,8 @@ async function fetchAPI<TResponse, TBody = unknown>(
     data = await response.json();
   } catch {
     data = null;
-  }
-  console.log("fetch response", response);
-  console.log("fetch data", data);
-  
-  
+  } 
+
   if (!response.ok) {
     const error = {
       statusCode: response.status,
@@ -48,7 +49,7 @@ async function fetchAPI<TResponse, TBody = unknown>(
       path: endpoint,
     };
 
-     return error as TResponse;
+    return error as TResponse;
   }
 
   return data as TResponse;
