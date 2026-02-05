@@ -8,12 +8,14 @@ export default function ActionButtons(item: Article) {
   return (
     <div className="flex items-center gap-4 text-sm">
       <StatisticButtons {...item} />
-      <Link href={`/article/${item?.id}/edit`} passHref>
-        <span className="text-blue-600 hover:underline transition-colors">
-          Edit
-        </span>
-      </Link>
-
+      <button
+        type="button"
+        className="text-blue-600 hover:underline transition-colors bg-transparent border-none p-0 cursor-pointer"
+        onClick={() => window.location.href = `/article/${item?.id}/edit`}
+        aria-label="Edit artikel"
+      >
+        Edit
+      </button>
       <DeleteButtons {...item} />
     </div>
   );
