@@ -9,6 +9,8 @@ import { useBlogs } from "@/hooks/useBlogs";
 import { formatDate } from "@/lib/formater";
 import AuthorInfo from "@/components/article/AuthorInfo";
 import ArticleCard from "@/components/article/ArticleCard";
+import Button from "@/components/ui/Button";
+// Removed invalid import for Textarea
 
 export default function ArticleDetail() {
   const params = useParams();
@@ -100,17 +102,13 @@ export default function ArticleDetail() {
         <div className="mb-8">
           <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
           <form className="mb-4">
-            <input
-              type="text"
+            <textarea
               placeholder="Add your comment..."
               className="w-full border rounded px-3 py-2 mb-2"
             />
-            <button
-              type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
-            >
-              Send
-            </button>
+            <div className="flex justify-end w-1/3">
+              <Button type="button">Send</Button>
+            </div>
           </form>
           <div className="divide-y divide-gray-200">
             {comments?.map((comment) => (
