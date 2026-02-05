@@ -121,7 +121,7 @@ export default function ArticleDetail() {
           </form>
 
           <div>
-            {comments?.map((comment, idx) => (
+            {comments?.slice(0, 5).map((comment, idx, arr) => (
               <div key={comment.id}>
                 <div className="flex items-start gap-3 py-4">
                   <img
@@ -141,9 +141,11 @@ export default function ArticleDetail() {
                     </div>
                   </div>
                 </div>
-                {idx !== comments.length - 1 && <hr className="my-2" />}
+
+                {idx !== arr.length - 1 && <hr className="my-2" />}
               </div>
             ))}
+
             <div className="mt-2">
               <SeeAllCommentsModal />
             </div>

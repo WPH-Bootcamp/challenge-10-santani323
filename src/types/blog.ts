@@ -58,6 +58,12 @@ export interface ComponentArticleCardProps {
   author: Author;
 }
 
+export interface Comment {
+  id: number;
+  like: string;
+  comment: ComponentArticleCardProps[]; 
+}
+
 export interface NewArticleParams {
   title: string;
   content: string;

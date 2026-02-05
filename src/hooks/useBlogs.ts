@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
 import { useRouter } from "next/navigation";
 import * as blogService from "@/services/blogService";
 import type {
@@ -15,6 +16,8 @@ import type {
   AvatarUrl,
   ParamSearchArticles,
 } from "@/types/blog";
+
+import { updateComment } from "@/store/slices/commentSlice";
 
 type ApiErrorResponse = {
   statusCode?: number;
@@ -31,6 +34,7 @@ const isApiError = (value: unknown): value is ApiErrorResponse => {
 };
 
 export function useBlogs() {
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [articles, setArticles] = useState<Article[]>([]);
@@ -107,6 +111,12 @@ export function useBlogs() {
     setError(null);
     try {
       const response = await blogService.getArticleCommentsService(params);
+      console.log("fetchComments response:", response);
+      dispatch(
+        updateComment({
+          comment: response,
+        }),
+      );
       setComments(response);
     } catch (err) {
       if (err instanceof Error) {
