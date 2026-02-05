@@ -1,10 +1,13 @@
 "use client";
-// ...existing code...
-import { useEffect, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
 import type { NavbarProps } from "@/types/navigate";
+import { useSelector } from "react-redux";
+import type { ProfileState } from "@/types/users";
+import { getInitials } from "@/lib/formater";
 
 export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
   const { fetchUserProfile, user } = useUser();
@@ -13,7 +16,11 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
   const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const router = useRouter();
+  const { username, avatarUrl, email, name, headline } = useSelector(
+    (state: { profile: ProfileState }) => state.profile,
+  );
 
+  const initials = useMemo(() => getInitials(name), [name]);
   // Check token on mount
 
   useEffect(() => {
@@ -146,11 +153,18 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center space-x-2 focus:outline-none"
                 >
-                  <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-semibold">
-                    {/* {user.name.charAt(0).toUpperCase()} */}
-                    {user?.name?.charAt(1).toUpperCase()}
-                  </div>
-                  <span className="text-gray-700 font-medium">{user.name}</span>
+                  {avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt={username || "User Avatar"}
+                      className="w-10 h-10 rounded-full object-cover border-4 border-blue-500"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-blue-500 text-white flex items-center justify-center text-2xl font-semibold border-4 border-blue-300">
+                      {initials || "JD"}
+                    </div>
+                  )}
+                  <span className="text-gray-700 font-medium">{name}</span>
                   <svg
                     className="w-4 h-4 text-gray-500"
                     fill="none"
