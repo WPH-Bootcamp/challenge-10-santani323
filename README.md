@@ -103,6 +103,8 @@ blog-app-challenge-10/
    npm install @headlessui/react
    npm install @heroicons/react
    npm install @reduxjs/toolkit react-redux
+   npm install react-icons
+
    ```
 
 

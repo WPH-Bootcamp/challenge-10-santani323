@@ -13,6 +13,7 @@ import type {
   Article,
   NewArticleParams,
   AvatarUrl,
+  ParamSearchArticles,
 } from "@/types/blog";
 
 type ApiErrorResponse = {
@@ -140,7 +141,6 @@ export function useBlogs() {
     setError(null);
     try {
       const response = await blogService.deleteArticleService(params);
-      
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Failed to fetch article detail");
@@ -158,9 +158,6 @@ export function useBlogs() {
     try {
       const response = await blogService.getPostsByUserIdService(params);
       setArticles(response.data);
-      // setTotalArticles(response.total);
-      // setCurrentPage(response.page);
-      // setLastPage(response.lastPage);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message || "Failed to fetch article detail");
@@ -193,6 +190,29 @@ export function useBlogs() {
     }
   }, []);
 
+  const fetchSearchArticles = useCallback(
+    async (params: ParamSearchArticles) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await blogService.getSearchArticlesService(params);
+        setArticles(response.data);
+        setTotalArticles(response.total);
+        setCurrentPage(response.page);
+        setLastPage(response.lastPage);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || "Failed to fetch articles");
+        } else {
+          setError("Failed to fetch articles");
+        }
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
   return {
     fetchArticles,
     fetchMostLikedArticles,
@@ -202,6 +222,7 @@ export function useBlogs() {
     addPost,
     fetchLikes,
     deleteArticle,
+    fetchSearchArticles,
     articles,
     articleMostLiked,
     totalArticles,

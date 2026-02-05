@@ -50,9 +50,7 @@ export default function ArticleDetail() {
   }, [articleDetail?.author?.id, fetchByUserId]);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    console.log("Submit comment:", comment);
-    console.log("Submit comment articleId:", articleDetail?.id);
+    e.preventDefault(); 
     postComment(
       {
         content: comment,

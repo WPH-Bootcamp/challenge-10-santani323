@@ -74,3 +74,9 @@ export interface AvatarUrl {
   content?: string;
   createdAt?: string;
 }
+
+export interface ParamSearchArticles {
+  query: string;
+  limit?: number;
+  page?: number;
+}

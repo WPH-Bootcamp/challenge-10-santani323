@@ -8,6 +8,7 @@ import type {
   ComponentArticleCardProps,
   NewArticleParams,
   AvatarUrl,
+  ParamSearchArticles,
 } from "@/types/blog";
 
 export const getArticlesService = async ({
@@ -77,4 +78,14 @@ export const addPostService = async (
     method: "POST",
     body: formData,
   });
+};
+
+export const getSearchArticlesService = async ({
+  query,
+  limit = 5,
+  page = 1,
+}: ParamSearchArticles): Promise<ArticlesResponse> => {
+  return fetchAPI<ArticlesResponse>(
+    `/posts/search?query=${query}&page=${page}&limit=${limit}`,
+  );
 };
