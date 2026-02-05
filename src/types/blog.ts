@@ -1,24 +1,88 @@
-/**
- * Blog Types
- * 
- * TODO: Define types sesuai dengan response dari API
- * Contoh structure (sesuaikan dengan API response yang sebenarnya):
- */
+export interface Author {
+  id: number;
+  name: string;
+  email: string;
+  avatarUrl?: string;
+}
 
-// export interface BlogPost {
-//   id: string;
-//   title: string;
-//   content: string;
-//   author: string;
-//   createdAt: string;
-//   image?: string;
-//   category?: string;
-//   // ... tambahkan fields lainnya sesuai API
-// }
+export interface Article {
+  id: number;
+  title: string;
+  content: string;
+  tags: string[];
+  imageUrl: string;
+  author: Author;
+  createdAt: string;
+  likes: number;
+  comments: number;
+}
 
-// export interface BlogPostListResponse {
-//   posts: BlogPost[];
-//   total: number;
-//   page: number;
-//   // ... tambahkan fields lainnya
-// }
+export interface ArticlesResponse {
+  data: Article[];
+  total: number;
+  page: number;
+  lastPage: number;
+}
+
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
+export interface UrlParams {
+  userId?: number;
+  page?: number;
+  limit?: number;
+}
+
+export interface ParamArticleDetail {
+  id: number;
+}
+export interface ArticleDetailResponse {
+  id: number;
+  title: string;
+  content: string;
+  tags: string[];
+  imageUrl: string;
+  imagePublicId: string;
+  createdAt: string;
+  likes: number;
+  comments: number;
+  author: Author;
+}
+
+export interface ComponentArticleCardProps {
+  id: number;
+  content: string;
+  createdAt: string;
+  author: Author;
+}
+
+export interface Comment {
+  id: number;
+  like: string;
+  comment: ComponentArticleCardProps[]; 
+}
+
+export interface NewArticleParams {
+  title: string;
+  content: string;
+  tags: string[];
+  image: File;
+}
+
+export interface AvatarUrl {
+  id: number;
+  name: string;
+  headline: string;
+  email?: string;
+  avatarUrl?: string;
+  content?: string;
+  createdAt?: string;
+}
+
+export interface ParamSearchArticles {
+  query: string;
+  limit?: number;
+  page?: number;
+}
