@@ -10,7 +10,6 @@ import Link from "next/link";
 import SuccessAlert from "@/components/ui/SuccessAlert";
 import WarningAlert from "@/components/ui/WarningAlert";
 
-
 export default function LoginPage() {
   const router = useRouter();
   const { login, loading, error } = useAuth();
@@ -43,13 +42,17 @@ export default function LoginPage() {
     if (hasError) return false;
     try {
       const response = await login({ email, password });
-      setStatusResponse(200);
-      setMessage("Login successful");
+
       // Simpan token ke localStorage
       if (response && response.token) {
+        setStatusResponse(200);
+        setMessage("Login successful");
         localStorage.setItem("token", response.token);
+        router.push("/");
+      } else {
+        setStatusResponse(response?.statusCode);
+        setMessage(response?.message);
       }
-      router.push("/");
     } catch (err) {
       setStatusResponse(err?.statusCode);
       setMessage(err?.message);

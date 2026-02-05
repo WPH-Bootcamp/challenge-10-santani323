@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/hooks/useUser";
@@ -8,6 +9,8 @@ import type { NavbarProps } from "@/types/navigate";
 import { useSelector } from "react-redux";
 import type { ProfileState } from "@/types/users";
 import { getInitials } from "@/lib/formater";
+import Logo from "@/assets/Logo.svg"
+
 
 export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
   const { fetchUserProfile, user } = useUser();
@@ -67,7 +70,17 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
                 <span className="text-base font-semibold">{title}</span>
               </button>
             ) : (
-              <Link href="/">MyApp</Link>
+              <Link href="/" className="flex items-center">
+                <div className="relative w-20 h-20 sm:w-20 sm:h-20 md:w-30 md:h-20 flex items-center">
+                  <Image
+                    src={Logo}
+                    alt="Logo"
+                    fill
+                    className="object-contain mr-2"
+                    priority
+                  />
+                </div>
+              </Link>
             )}
           </div>
           {!back && (
