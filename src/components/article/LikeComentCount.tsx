@@ -1,11 +1,22 @@
 "use client";
 import Link from "next/link";
 import { Article } from "@/types/blog";
+import { useBlogs } from "@/hooks/useBlogs";
+import { useState } from "react";
+import { useEffect } from "react";
 
 export default function LikeComentCount(item: Article) {
+  const { postLikes } = useBlogs();
+  const [addLike, setAddLike] = useState(false);
+
   return (
     <div className="flex items-center gap-4 text-xs text-gray-500 mt-2">
-      <span className="flex items-center gap-1">
+      <span
+        className="flex items-center gap-1"
+        onClick={(e) => {
+          e.preventDefault();
+        }}
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

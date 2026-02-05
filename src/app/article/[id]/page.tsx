@@ -119,7 +119,7 @@ export default function ArticleDetail() {
           </form>
 
           <div className="divide-y">
-            {comments.map((comment) => (
+            {comments?.map((comment) => (
               <div key={comment.id} className="flex gap-2 py-4">
                 <img
                   src={comment.author.avatarUrl}
@@ -135,6 +135,7 @@ export default function ArticleDetail() {
                 </div>
               </div>
             ))}
+            <span>See all comments</span>
           </div>
         </div>
 

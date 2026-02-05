@@ -136,6 +136,23 @@ export function useBlogs() {
     }
   }, []);
 
+  const postLikes = useCallback(async (params: ParamArticleDetail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.postArticleLikesService(params);
+      setLikes(response);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to post article likes");
+      } else {
+        setError("Failed to post article likes");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const deleteArticle = useCallback(async (params: ParamArticleDetail) => {
     setLoading(true);
     setError(null);
@@ -190,26 +207,29 @@ export function useBlogs() {
     }
   }, []);
 
-  const putPost = useCallback(async (payload: NewArticleParams & { id: number }) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const response = await blogService.putPostService(payload);
-      if (isApiError(response)) {
-        throw new Error(response.message || "Failed to update post");
+  const putPost = useCallback(
+    async (payload: NewArticleParams & { id: number }) => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await blogService.putPostService(payload);
+        if (isApiError(response)) {
+          throw new Error(response.message || "Failed to update post");
+        }
+        return response;
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message || "Failed to update post");
+        } else {
+          setError("Failed to update post");
+        }
+        throw err;
+      } finally {
+        setLoading(false);
       }
-      return response;
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err.message || "Failed to update post");
-      } else {
-        setError("Failed to update post");
-      }
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
   const fetchSearchArticles = useCallback(
     async (params: ParamSearchArticles) => {
@@ -245,6 +265,7 @@ export function useBlogs() {
     fetchLikes,
     deleteArticle,
     fetchSearchArticles,
+    postLikes,
     articles,
     articleMostLiked,
     totalArticles,
