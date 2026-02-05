@@ -80,6 +80,21 @@ export const addPostService = async (
   });
 };
 
+export const putPostService = async (
+  payload: NewArticleParams & { id: number },
+): Promise<ArticleDetailResponse> => {
+  const formData = new FormData();
+  formData.append("title", payload.title);
+  formData.append("content", payload.content);
+  formData.append("tags", JSON.stringify(payload.tags));
+  formData.append("image", payload.image);
+
+  return fetchAPI<ArticleDetailResponse>(`/posts/${payload.id}`, {
+    method: "PATCH",
+    body: formData,
+  });
+};
+
 export const getSearchArticlesService = async ({
   query,
   limit = 5,

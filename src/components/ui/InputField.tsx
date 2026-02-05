@@ -32,7 +32,7 @@ export default function InputField({
         id={name}
         name={name}
         type={type}
-        value={value}
+        value={value ?? ''}
         placeholder={placeholder}
         required={required}
         onChange={onChange}

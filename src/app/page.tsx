@@ -25,6 +25,13 @@ export default function Home() {
     fetchMostLikedArticles({ page: 1, limit: 3 });
   }, [fetchArticles, fetchMostLikedArticles, page, limit]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-lg font-semibold">Loading...</span>
+      </div>
+    );
+  }
   return (
     <>
       <Navbar />

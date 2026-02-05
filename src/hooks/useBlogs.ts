@@ -190,6 +190,27 @@ export function useBlogs() {
     }
   }, []);
 
+  const putPost = useCallback(async (payload: NewArticleParams & { id: number }) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.putPostService(payload);
+      if (isApiError(response)) {
+        throw new Error(response.message || "Failed to update post");
+      }
+      return response;
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to update post");
+      } else {
+        setError("Failed to update post");
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchSearchArticles = useCallback(
     async (params: ParamSearchArticles) => {
       setLoading(true);
@@ -220,6 +241,7 @@ export function useBlogs() {
     fetchComments,
     fetchByUserId,
     addPost,
+    putPost,
     fetchLikes,
     deleteArticle,
     fetchSearchArticles,

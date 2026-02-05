@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import InputField from "@/components/ui/InputField";
@@ -10,7 +10,9 @@ import Form from "@/components/ui/Form";
 import SuccessAlert from "@/components/ui/SuccessAlert";
 import { useBlogs } from "@/hooks/useBlogs";
 
-export default function WritePage() {
+export default function EditWritePage() {
+  const params = useParams();
+  const articleId = params?.id?.toString();
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -21,21 +23,8 @@ export default function WritePage() {
   const [coverPreview, setCoverPreview] = useState<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
-  const { addPost, loading, error } = useBlogs();
-
-  useEffect(() => {
-    if (!coverFile) {
-      setCoverPreview("");
-      return;
-    }
-
-    const previewUrl = URL.createObjectURL(coverFile);
-    setCoverPreview(previewUrl);
-
-    return () => {
-      URL.revokeObjectURL(previewUrl);
-    };
-  }, [coverFile]);
+  const { putPost, fetchArticleDetail, articleDetail, loading, error } =
+    useBlogs();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,11 +37,12 @@ export default function WritePage() {
     setFormError(null);
 
     try {
-      await addPost({
+      await putPost({
         title,
         content,
         tags,
         image: coverFile,
+        id: articleDetail?.id || 0,
       });
 
       setSubmitted(true);
@@ -88,18 +78,71 @@ export default function WritePage() {
     setTags(tags.filter((_, i) => i !== idx));
   };
 
+  // ===== FETCH ARTICLE & COMMENTS =====
+  useEffect(() => {
+    if (!articleId) return;
+
+    const id = parseInt(articleId);
+    fetchArticleDetail({ id });
+  }, [articleId, fetchArticleDetail]);
+
+  useEffect(() => {
+    if (!coverFile) {
+      setCoverPreview("");
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(coverFile);
+    setCoverPreview(previewUrl);
+
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [coverFile]);
+
+  // ===== FETCH ARTICLE & COMMENTS =====
+  useEffect(() => {
+    if (!articleId) return;
+
+    const id = parseInt(articleId);
+    fetchArticleDetail({ id });
+  }, [articleId, fetchArticleDetail]);
+
+  useEffect(() => {
+    if (!coverFile) {
+      setCoverPreview("");
+      return;
+    }
+
+    const previewUrl = URL.createObjectURL(coverFile);
+    setCoverPreview(previewUrl);
+
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [coverFile]);
+
+  useEffect(() => {
+    if (articleDetail) {
+      setTitle(articleDetail?.title);
+      setContent(articleDetail?.content);
+      setTags(articleDetail?.tags);
+      setCoverPreview(articleDetail?.imageUrl);
+    }
+  }, [articleDetail]);
+
   return (
     <>
-      <Navbar back={true} title="Write" />
+      <Navbar back={true} title="Edit" />
       <div className="min-h-screen bg-gray-50 pt-20 pb-12">
         <div className="max-w-5xl mx-auto px-4">
           <div className="bg-white rounded-2xl shadow-sm p-6 md:p-8">
             <div className="mb-6">
               <h1 className="text-xl font-semibold text-gray-900">
-                Write Your Post
+                Edit Your Post
               </h1>
               <p className="text-sm text-gray-500 mt-1">
-                Buat postingan baru dengan judul, konten, cover image, dan tag.
+                Edit postingan Anda dengan judul, konten, cover image, dan tag.
               </p>
             </div>
 
@@ -217,9 +260,11 @@ export default function WritePage() {
                 </label>
               </div>
 
-
               <div>
-                <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="tags"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Tags
                 </label>
                 <div className="flex flex-wrap gap-2 border border-gray-200 rounded-lg px-3 py-2 bg-white">
@@ -244,20 +289,24 @@ export default function WritePage() {
                     ref={tagInputRef}
                     type="text"
                     className="flex-1 min-w-[120px] border-none focus:ring-0 outline-none text-sm py-1 px-2 bg-transparent"
-                    placeholder={tags.length === 0 ? "Type and press Enter" : "Add tag"}
+                    placeholder={
+                      tags.length === 0 ? "Type and press Enter" : "Add tag"
+                    }
                     value={tagInput}
                     onChange={(e) => setTagInput(e.target.value)}
                     onKeyDown={handleTagInputKeyDown}
                   />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Press Enter or comma to add tag</p>
+                <p className="text-xs text-gray-400 mt-1">
+                  Press Enter or comma to add tag
+                </p>
               </div>
 
               <div className="flex justify-end">
                 <Button
                   type="submit"
                   className="w-40"
-                  disabled={!title || !content || !coverFile || loading}
+                  disabled={loading}
                 >
                   {loading ? "Publishing..." : "Finish"}
                 </Button>
