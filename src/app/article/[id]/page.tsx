@@ -11,8 +11,12 @@ import AuthorInfo from "@/components/article/AuthorInfo";
 import ArticleCard from "@/components/article/ArticleCard";
 import Button from "@/components/ui/Button";
 import SeeAllCommentsModal from "@/components/article/SeeAllComments";
+import { updateArticle } from "@/store/slices/articelSlice";
+import { useAppDispatch } from "@/hooks/useAppDispatch";
+import FormCommentArticel from "@/components/article/FormCommentArticel";
 
 export default function ArticleDetail() {
+  const dispatch = useAppDispatch();
   const params = useParams();
   const articleId = params?.id?.toString();
 
@@ -28,6 +32,7 @@ export default function ArticleDetail() {
   const { loading: loadingComment, postComment } = useComment();
 
   const [comment, setComment] = useState("");
+  
 
   // ===== FETCH ARTICLE & COMMENTS =====
   useEffect(() => {
@@ -47,6 +52,7 @@ export default function ArticleDetail() {
       page: 1,
       limit: 5,
     });
+    dispatch(updateArticle({ id: articleDetail?.id }));
   }, [articleDetail?.author?.id, fetchByUserId]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -106,19 +112,8 @@ export default function ArticleDetail() {
         <div className="mb-8">
           <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
 
-          <form onSubmit={handleSubmit} className="mb-4">
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              placeholder="Add your comment..."
-              className="w-full border rounded px-3 py-2 mb-2"
-            />
-            <div className="flex justify-end">
-              <Button type="submit" loading={loadingComment}>
-                Send
-              </Button>
-            </div>
-          </form>
+          
+                      <FormCommentArticel />
 
           <div>
             {comments?.slice(0, 5).map((comment, idx, arr) => (

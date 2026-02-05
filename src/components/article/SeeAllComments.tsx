@@ -66,7 +66,7 @@ export default function SeeAllcommentModal() {
                   </div>
                 </div>
               ))}
-            </div>F
+            </div>
           </DialogPanel>
         </div>
       </Dialog>
