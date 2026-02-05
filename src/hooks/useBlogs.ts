@@ -135,6 +135,23 @@ export function useBlogs() {
     }
   }, []);
 
+  const deleteArticle = useCallback(async (params: ParamArticleDetail) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await blogService.deleteArticleService(params);
+      
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message || "Failed to fetch article detail");
+      } else {
+        setError("Failed to fetch article detail");
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   const fetchByUserId = useCallback(async (params: UrlParams) => {
     setLoading(true);
     setError(null);
@@ -184,6 +201,7 @@ export function useBlogs() {
     fetchByUserId,
     addPost,
     fetchLikes,
+    deleteArticle,
     articles,
     articleMostLiked,
     totalArticles,

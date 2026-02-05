@@ -46,6 +46,14 @@ export const getArticleLikesService = async ({
   return fetchAPI<AvatarUrl[]>(`/posts/${id}/likes`);
 };
 
+export const deleteArticleService = async ({
+  id,
+}: ParamArticleDetail): Promise<AvatarUrl[]> => {
+  return fetchAPI<AvatarUrl[]>(`/posts/${id}`, {
+    method: "DELETE",
+  });
+};
+
 export const getPostsByUserIdService = async ({
   page = 1,
   limit = 5,
