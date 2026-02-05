@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter, useParams } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -26,7 +26,7 @@ export default function EditWritePage() {
   const { putPost, fetchArticleDetail, articleDetail, loading, error } =
     useBlogs();
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
     if (!coverFile) {
@@ -82,7 +82,7 @@ export default function EditWritePage() {
   useEffect(() => {
     if (!articleId) return;
 
-    const id = parseInt(articleId);
+    const id = Number(articleId);
     fetchArticleDetail({ id });
   }, [articleId, fetchArticleDetail]);
 
@@ -104,7 +104,7 @@ export default function EditWritePage() {
   useEffect(() => {
     if (!articleId) return;
 
-    const id = parseInt(articleId);
+    const id = Number(articleId);
     fetchArticleDetail({ id });
   }, [articleId, fetchArticleDetail]);
 
@@ -210,7 +210,7 @@ export default function EditWritePage() {
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Enter your content"
-                    className="w-full min-h-[200px] px-4 py-3 text-sm text-gray-700 focus:outline-none"
+                    className="w-full min-h-50 px-4 py-3 text-sm text-gray-700 focus:outline-none"
                     required
                   />
                 </div>
@@ -288,7 +288,7 @@ export default function EditWritePage() {
                     id="tags"
                     ref={tagInputRef}
                     type="text"
-                    className="flex-1 min-w-[120px] border-none focus:ring-0 outline-none text-sm py-1 px-2 bg-transparent"
+                    className="flex-1 min-w-30 border-none focus:ring-0 outline-none text-sm py-1 px-2 bg-transparent"
                     placeholder={
                       tags.length === 0 ? "Type and press Enter" : "Add tag"
                     }

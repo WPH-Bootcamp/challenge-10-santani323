@@ -1,8 +1,5 @@
 "use client";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/Navbar";
 import { Article } from "@/types/blog";
 import DeleteButtons from "./DeleteButtons";
 import StatisticButtons from "./StatisticButtons";
