@@ -14,6 +14,8 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
   const [open, setOpen] = useState(false);
   const [token, setToken] = useState<string | null>(null);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [mobileSearchKeyword, setMobileSearchKeyword] = useState("");
   const [showUserMenu, setShowUserMenu] = useState(false);
   const router = useRouter();
   const { username, avatarUrl, email, name, headline } = useSelector(
@@ -74,32 +76,27 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
                 className="w-full max-w-xs hidden md:block mx-auto"
                 onSubmit={(e) => {
                   e.preventDefault();
+                  if (searchKeyword.trim()) {
+                    router.push(
+                      `/search/${encodeURIComponent(searchKeyword.trim())}`,
+                    );
+                  }
                 }}
               >
-                <div className="relative">
+                <div className="relative flex items-center bg-white rounded-xl border border-gray-200 shadow-sm px-3 py-2 w-full">
+                  <span className="text-gray-400 mr-2 flex items-center">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                    </svg>
+                  </span>
                   <input
                     type="text"
-                    placeholder="Search..."
-                    className="block w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    value={searchKeyword}
+                    onChange={(e) => setSearchKeyword(e.target.value)}
+                    placeholder="Frontend Development"
+                    className="flex-1 bg-transparent outline-none border-none text-gray-700 placeholder-gray-400 text-base"
                   />
-                  <button
-                    type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
-                  >
-                    <svg
-                      className="h-5 w-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                      />
-                    </svg>
-                  </button>
+                  {/* No submit button visible, submit on enter */}
                 </div>
               </form>
             </div>
@@ -290,33 +287,28 @@ export default function Navbar({ back = false, title = "Back" }: NavbarProps) {
               onSubmit={(e) => {
                 e.preventDefault();
                 setShowMobileSearch(false);
+                if (mobileSearchKeyword.trim()) {
+                  router.push(
+                    `/search/${encodeURIComponent(mobileSearchKeyword.trim())}`,
+                  );
+                }
               }}
             >
-              <div className="relative mb-2">
+              <div className="relative flex items-center bg-white rounded-xl border border-gray-200 shadow-sm px-3 py-2 w-full mb-2">
+                <span className="text-gray-400 mr-2 flex items-center">
+                  <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                  </svg>
+                </span>
                 <input
                   type="text"
-                  placeholder="Search..."
-                  className="block w-full pl-4 pr-10 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  value={mobileSearchKeyword}
+                  onChange={(e) => setMobileSearchKeyword(e.target.value)}
+                  placeholder="Frontend Development"
+                  className="flex-1 bg-transparent outline-none border-none text-gray-700 placeholder-gray-400 text-base"
                   autoFocus
                 />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
-                >
-                  <svg
-                    className="h-5 w-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                    />
-                  </svg>
-                </button>
+                {/* No submit button visible, submit on enter */}
               </div>
             </form>
           )}
