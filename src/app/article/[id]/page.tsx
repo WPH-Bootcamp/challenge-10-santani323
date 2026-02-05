@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
@@ -11,6 +10,7 @@ import { useComment } from "@/hooks/useComment";
 import AuthorInfo from "@/components/article/AuthorInfo";
 import ArticleCard from "@/components/article/ArticleCard";
 import Button from "@/components/ui/Button";
+import SeeAllCommentsModal from "@/components/article/SeeAllComments";
 
 export default function ArticleDetail() {
   const params = useParams();
@@ -50,7 +50,7 @@ export default function ArticleDetail() {
   }, [articleDetail?.author?.id, fetchByUserId]);
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault(); 
+    e.preventDefault();
     postComment(
       {
         content: comment,
@@ -114,28 +114,39 @@ export default function ArticleDetail() {
               className="w-full border rounded px-3 py-2 mb-2"
             />
             <div className="flex justify-end">
-              <Button type="submit" loading={loadingComment}>Send</Button>
+              <Button type="submit" loading={loadingComment}>
+                Send
+              </Button>
             </div>
           </form>
 
-          <div className="divide-y">
-            {comments?.map((comment) => (
-              <div key={comment.id} className="flex gap-2 py-4">
-                <img
-                  src={comment.author.avatarUrl}
-                  alt={comment.author.name}
-                  className="w-8 h-8 rounded-full"
-                />
-                <div>
-                  <div className="font-medium">{comment.author.name}</div>
-                  <div className="text-xs text-gray-400">
-                    {formatDate(comment.createdAt)}
+          <div>
+            {comments?.map((comment, idx) => (
+              <div key={comment.id}>
+                <div className="flex items-start gap-3 py-4">
+                  <img
+                    src={comment.author.avatarUrl}
+                    alt={comment.author.name}
+                    className="w-10 h-10 rounded-full object-cover mt-1"
+                  />
+                  <div className="flex-1">
+                    <div className="font-semibold text-base">
+                      {comment.author.name}
+                    </div>
+                    <div className="text-xs text-gray-400 mb-1">
+                      {formatDate(comment.createdAt)}
+                    </div>
+                    <div className="text-sm text-gray-700">
+                      {comment.content}
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-600">{comment.content}</div>
                 </div>
+                {idx !== comments.length - 1 && <hr className="my-2" />}
               </div>
             ))}
-            <span>See all comments</span>
+            <div className="mt-2">
+              <SeeAllCommentsModal />
+            </div>
           </div>
         </div>
 
