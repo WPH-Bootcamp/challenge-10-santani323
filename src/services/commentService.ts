@@ -8,11 +8,8 @@ export const postCommentService = async (
   payload: ParmComment,
   articleId: number,
 ): Promise<CommentResponse> => {
-  return fetchAPI<CommentResponse, ParmComment>(
-    `/posts/${articleId}/comments`,
-    {
-      method: "POST",
-      body: payload,
-    },
-  );
+  return fetchAPI<CommentResponse, ParmComment>(`/comments/${articleId}`, {
+    method: "POST",
+    body: payload,
+  });
 };

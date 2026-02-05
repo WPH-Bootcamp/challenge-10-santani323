@@ -4,17 +4,18 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
 import { formatDate } from "@/lib/formater";
+import { useComment } from "@/hooks/useComment";
 import AuthorInfo from "@/components/article/AuthorInfo";
 import ArticleCard from "@/components/article/ArticleCard";
 import Button from "@/components/ui/Button";
-// Removed invalid import for Textarea
 
 export default function ArticleDetail() {
   const params = useParams();
   const articleId = params?.id?.toString();
+
   const {
     articleDetail,
     comments,
@@ -23,107 +24,113 @@ export default function ArticleDetail() {
     fetchComments,
     fetchByUserId,
   } = useBlogs();
-  console.log("commentscomments", comments);
 
+  const { loading: loadingComment, postComment } = useComment();
+
+  const [comment, setComment] = useState("");
+
+  // ===== FETCH ARTICLE & COMMENTS =====
   useEffect(() => {
-    if (articleId) {
-      fetchArticleDetail({ id: parseInt(articleId) });
-      fetchComments({ id: parseInt(articleId) });
-    }
-  }, [fetchArticleDetail, fetchComments, articleId]);
+    if (!articleId) return;
 
+    const id = parseInt(articleId);
+    fetchArticleDetail({ id });
+    fetchComments({ id });
+  }, [articleId, fetchArticleDetail, fetchComments, loadingComment]);
+
+  // ===== FETCH OTHER ARTICLES BY AUTHOR =====
   useEffect(() => {
     if (!articleDetail?.author?.id) return;
-
-    console.log("articleDetail", articleDetail);
 
     fetchByUserId({
       userId: articleDetail.author.id,
       page: 1,
       limit: 5,
     });
-  }, [articleDetail?.author?.id]);
+  }, [articleDetail?.author?.id, fetchByUserId]);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    console.log("Submit comment:", comment);
+    console.log("Submit comment articleId:", articleDetail?.id);
+    postComment(
+      {
+        content: comment,
+      },
+      articleDetail?.id || 0,
+    );
+    setComment("");
+  }
 
   return (
     <>
       <Navbar />
+
       <div className="max-w-2xl mx-auto pt-20 pb-10 px-4">
         <h1 className="text-2xl font-bold mb-2">{articleDetail?.title}</h1>
-        <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 mb-4">
+
+        <div className="flex flex-wrap gap-2 text-sm text-gray-500 mb-4">
           {articleDetail?.tags.map((tag: string, index: number) => (
             <span
               key={`${tag}-${index}`}
-              className="
-                inline-flex
-                items-center
-                px-4 py-1.5
-                rounded-full
-                border
-                border-gray-300
-                text-gray-800
-                text-sm
-                font-medium
-              "
+              className="px-4 py-1.5 rounded-full border text-gray-800 text-sm font-medium"
             >
               {tag}
             </span>
           ))}
         </div>
+
         <div className="flex items-center gap-2 mb-6">
-          {articleDetail?.author &&
-          typeof articleDetail.author.id === "number" ? (
-            <AuthorInfo
-              {...(articleDetail.author as Required<
-                typeof articleDetail.author
-              >)}
-            />
-          ) : null}
+          {articleDetail?.author?.id && (
+            <AuthorInfo {...articleDetail.author} />
+          )}
           <span className="text-xs text-gray-400">
             {formatDate(articleDetail?.createdAt)}
           </span>
         </div>
-        <div className="mb-6">
-          <img
-            src={articleDetail?.imageUrl}
-            width={600}
-            height={300}
-            alt={articleDetail?.title}
-            className="rounded w-full object-cover"
-          />
-        </div>
-        <div className="prose max-w-none mb-8">
-          <div
-            dangerouslySetInnerHTML={{ __html: articleDetail?.content ?? "" }}
-          />
-        </div>
-        <hr className="my-8 border-gray-200" />
 
-        {/* Comments */}
+        <img
+          src={articleDetail?.imageUrl}
+          alt={articleDetail?.title}
+          className="rounded w-full object-cover mb-6"
+        />
+
+        <div
+          className="prose max-w-none mb-8"
+          dangerouslySetInnerHTML={{
+            __html: articleDetail?.content ?? "",
+          }}
+        />
+
+        <hr className="my-8" />
+
+        {/* COMMENTS */}
         <div className="mb-8">
           <h3 className="font-semibold mb-2">Comments ({comments.length})</h3>
-          <form className="mb-4">
+
+          <form onSubmit={handleSubmit} className="mb-4">
             <textarea
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
               placeholder="Add your comment..."
               className="w-full border rounded px-3 py-2 mb-2"
             />
-            <div className="flex justify-end w-1/3">
-              <Button type="button">Send</Button>
+            <div className="flex justify-end">
+              <Button type="submit" loading={loadingComment}>Send</Button>
             </div>
           </form>
-          <div className="divide-y divide-gray-200">
-            {comments?.map((comment) => (
-              <div key={comment.id} className="flex gap-2 items-start py-4">
+
+          <div className="divide-y">
+            {comments.map((comment) => (
+              <div key={comment.id} className="flex gap-2 py-4">
                 <img
                   src={comment.author.avatarUrl}
-                  width={32}
-                  height={32}
                   alt={comment.author.name}
-                  className="rounded-full"
+                  className="w-8 h-8 rounded-full"
                 />
-
                 <div>
                   <div className="font-medium">{comment.author.name}</div>
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-xs text-gray-400">
                     {formatDate(comment.createdAt)}
                   </div>
                   <div className="text-sm text-gray-600">{comment.content}</div>
@@ -132,16 +139,18 @@ export default function ArticleDetail() {
             ))}
           </div>
         </div>
-        {/* Another Post */}
+
+        {/* ANOTHER POST */}
         <div className="mt-10">
           <h3 className="font-semibold mb-3">Another Post</h3>
           <div className="space-y-4">
-            {articles?.map((relatedArticle) => (
-              <ArticleCard key={relatedArticle.id} {...relatedArticle} />
+            {articles.map((article) => (
+              <ArticleCard key={article.id} {...article} />
             ))}
           </div>
         </div>
       </div>
+
       <Footer />
     </>
   );
