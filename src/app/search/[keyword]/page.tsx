@@ -4,10 +4,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/article/ArticleCard";
 import ArticleCompact from "@/components/article/ArticleCompact";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { useBlogs } from "@/hooks/useBlogs";
 
-export default function Home() {
+export default function SearchPage() {
+  const params = useParams();
+  const query = params?.keyword?.toString() ?? "";
   const {
     articles,
     articleMostLiked,
@@ -16,22 +19,13 @@ export default function Home() {
     lastPage,
     currentPage,
     loading,
-    fetchArticles,
-    fetchMostLikedArticles,
+    fetchSearchArticles,
   } = useBlogs();
 
   useEffect(() => {
-    fetchArticles({ page, limit });
-    fetchMostLikedArticles({ page: 1, limit: 3 });
-  }, [fetchArticles, fetchMostLikedArticles, page, limit]);
+    fetchSearchArticles({ query, page, limit });
+  }, [fetchSearchArticles, query, page, limit]);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="text-lg font-semibold">Loading...</span>
-      </div>
-    );
-  }
   return (
     <>
       <Navbar />
@@ -39,7 +33,9 @@ export default function Home() {
         <div className="w-full max-w-5xl px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Left: Recommend For You */}
           <div className="md:col-span-2">
-            <h2 className="text-lg font-semibold mb-4">Recommend For You</h2>
+            <h2 className="text-lg font-semibold mb-4">
+              Resoult For "{query}"
+            </h2>
             <div className="space-y-4">
               {articles.map((item) => (
                 <ArticleCard key={item.id} {...item} />
@@ -53,7 +49,13 @@ export default function Home() {
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-black hover:bg-blue-50 hover:text-blue-700"
                 }`}
-                onClick={() => fetchArticles({ page: currentPage - 1, limit })}
+                onClick={() =>
+                  fetchSearchArticles({
+                    query: query,
+                    page: currentPage - 1,
+                    limit,
+                  })
+                }
                 disabled={currentPage === 1}
               >
                 <span className="mr-1">&#60;</span> Previous
@@ -82,7 +84,9 @@ export default function Home() {
                         ? "bg-blue-600 text-white"
                         : "text-black hover:bg-blue-50 hover:text-blue-700"
                     }`}
-                    onClick={() => fetchArticles({ page: pageNum, limit })}
+                    onClick={() =>
+                      fetchSearchArticles({ query, page: pageNum, limit })
+                    }
                   >
                     {pageNum}
                   </button>
@@ -98,20 +102,13 @@ export default function Home() {
                     ? "text-gray-400 cursor-not-allowed"
                     : "text-black hover:bg-blue-50 hover:text-blue-700"
                 }`}
-                onClick={() => fetchArticles({ page: currentPage + 1, limit })}
+                onClick={() =>
+                  fetchSearchArticles({ query, page: currentPage + 1, limit })
+                }
                 disabled={currentPage === lastPage}
               >
                 Next <span className="ml-1">&#62;</span>
               </button>
-            </div>
-          </div>
-          {/* Right: Most Liked */}
-          <div className="md:col-span-1">
-            <h2 className="text-lg font-semibold mb-4">Most Liked</h2>
-            <div className="space-y-4">
-              {articleMostLiked.map((item) => (
-                <ArticleCompact key={item.id} {...item} />
-              ))}
             </div>
           </div>
         </div>
